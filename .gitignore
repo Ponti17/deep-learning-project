@@ -1,0 +1,6 @@
+# Blacklist all files in data
+**/data/*
+
+# Whitelist .keep to keep the directory when cloning
+!**/data/.keep
+
