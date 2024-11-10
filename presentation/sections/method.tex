@@ -1,15 +1,26 @@
 \documentclass[../main.tex]{subfiles}
 
-\graphicspath{{\subfix{../images/}}}
+\graphicspath{{\subfix{../imgs/}}}
 
 \begin{document}
 
 \section{Method}
 \begin{frame}[t]
-    \frametitle{Project Goals}
+    \frametitle{Method}
 
-    \begin{block}{Primary Goal}
-        PUMA dataset.
+    \begin{block}{Augmentation}
+        \begin{itemize}
+            \item Data augmentation is a technique to increase the size of 
+            the training set by applying transformations to the original images
+            \item The transformations are applied randomly to the images
+            \item Examples of transformations:
+            \begin{itemize}
+                \item Random rotation
+                \item Random horizontal flip
+                \item Random vertical flip
+                \item Random zoom
+            \end{itemize}
+        \end{itemize}
     \end{block}
 \end{frame}
 
