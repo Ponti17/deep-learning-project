@@ -7,4 +7,15 @@
 # LaTeX
 **/out/
 **/build/
+*.aux
+*.fls
+*.log
+*.pdf
+*.synctex.gz
+*.toc
+*.fdb_latexmk
+*.out
+*.snm
+*.nav
+
 
