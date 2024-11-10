@@ -1,0 +1,75 @@
+\NeedsTeXFormat{LaTeX2e}
+
+\usepackage{bera}% optional: just to have a nice mono-spaced font
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{accsupp}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{green!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=true,
+    keepspaces=true,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
+% Terminal Style
+\lstdefinelanguage{terminal}{
+    basicstyle=\color{orange}\normalfont\ttfamily,
+    numberstyle=\scriptsize\color{white},
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    keepspaces=true,
+    breaklines=true,
+    %frame=lines,
+    backgroundcolor=\color{black},
+    literate=
+     *{0}{{{\color{orange}0}}}{1}
+      {1}{{{\color{orange}1}}}{1}
+      {2}{{{\color{orange}2}}}{1}
+      {3}{{{\color{orange}3}}}{1}
+      {4}{{{\color{orange}4}}}{1}
+      {5}{{{\color{orange}5}}}{1}
+      {6}{{{\color{orange}6}}}{1}
+      {7}{{{\color{orange}7}}}{1}
+      {8}{{{\color{orange}8}}}{1}
+      {9}{{{\color{orange}9}}}{1}
+      {:}{{{\color{orange}{:}}}}{1}
+      {,}{{{\color{orange}{,}}}}{1}
+      {\{}{{{\color{orange}{\{}}}}{1}
+      {\}}{{{\color{orange}{\}}}}}{1}
+      {[}{{{\color{orange}{[}}}}{1}
+      {]}{{{\color{orange}{]}}}}{1},
+}
+
+% \noindent JSON formatted body:
+% \begin{lstlisting}[language=terminal]
+% code goes here    
+% \end{lstlisting}

@@ -4,3 +4,7 @@
 # Whitelist .keep to keep the directory when cloning
 !**/data/.keep
 
+# LaTeX
+**/out/
+**/build/
+
