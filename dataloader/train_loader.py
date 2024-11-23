@@ -1,6 +1,9 @@
 import os
 import json
 
+# Misc
+import numpy as np
+
 # ML
 import torch
 from torchvision.transforms import ToTensor
@@ -98,6 +101,18 @@ class PumaDataset(torch.utils.data.Dataset):
                     draw_1.polygon(coords, outline=255, fill=255)
                 else:
                     draw_2.polygon(coords, outline=255, fill=255)
+
+        if self.transform_image:
+            img = np.array(img)
+            img = self.transform_image(image=img)['image']
+
+        if self.transform_geojson:
+            img_poly_0 = np.array(img_poly_0)
+            img_poly_1 = np.array(img_poly_1)
+            img_poly_2 = np.array(img_poly_2)
+            img_poly_0 = self.transform_geojson(image=img_poly_0)['mask']
+            img_poly_1 = self.transform_geojson(image=img_poly_1)['mask']
+            img_poly_2 = self.transform_geojson(image=img_poly_2)['mask']
 
         # Convert polygons to tensors and combine
         img_poly_0 = ToTensor()(img_poly_0)
