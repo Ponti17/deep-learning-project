@@ -1,20 +1,14 @@
+import os
+import json
+
 # ML
 import torch
-from torch import nn
-from torch.utils.data import DataLoader
-from torch.utils.data import Dataset, DataLoader, random_split
-from torchvision import transforms
 from torchvision.transforms import ToTensor
 
 # GeoJSON
-import json
 from shapely.geometry import shape
 from shapely.geometry.polygon import Polygon
 from PIL import Image, ImageDraw
-
-# Misc
-import os
-import numpy as np
 
 class PumaDataset(torch.utils.data.Dataset):
     """
