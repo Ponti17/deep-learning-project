@@ -17,7 +17,7 @@ class PumaDataset(torch.utils.data.Dataset):
     """
     Dataloader for the PUMA dataset.
     """
-    def __init__(self, image_dir, geojson_dir, transform_image=None, transform_geojson=None):
+    def __init__(self, image_dir, geojson_dir, transform=None):
         """        
         Args:
         - image_dir (string): Directory with all the images.
@@ -29,8 +29,7 @@ class PumaDataset(torch.utils.data.Dataset):
         self.geojson_dir    = geojson_dir
         self.images         = os.listdir(image_dir)
         self.geojsons       = os.listdir(geojson_dir) #? Is geojsons as word?
-        self.transform_image    = transform_image
-        self.transform_geojson  = transform_geojson
+        self.transform      = transform
 
         # Polygon class labels
         self.classes = {
@@ -102,25 +101,18 @@ class PumaDataset(torch.utils.data.Dataset):
                 else:
                     draw_2.polygon(coords, outline=255, fill=255)
 
-        if self.transform_image:
-            img = np.array(img)
-            img = self.transform_image(image=img)['image']
+        # Albumentations KEEPS the mask dimensions (H, W, C) but changes the image to (C, H, W).
+        # This is because PyTorch expects images to be channel first.
+        mask = np.stack([np.array(img_poly_0), np.array(img_poly_1), np.array(img_poly_2)], axis=0)
+        mask = np.transpose(mask, (1, 2, 0))  # (H, W, 3)
+        img = np.array(img)[:, :, :3]         # (H, W, 3)|
 
-        if self.transform_geojson:
-            img_poly_0 = np.array(img_poly_0)
-            img_poly_1 = np.array(img_poly_1)
-            img_poly_2 = np.array(img_poly_2)
-            img_poly_0 = self.transform_geojson(image=img_poly_0)['mask']
-            img_poly_1 = self.transform_geojson(image=img_poly_1)['mask']
-            img_poly_2 = self.transform_geojson(image=img_poly_2)['mask']
-
-        # Convert polygons to tensors and combine
-        img_poly_0 = ToTensor()(img_poly_0)
-        img_poly_1 = ToTensor()(img_poly_1)
-        img_poly_2 = ToTensor()(img_poly_2)
-        mask = torch.cat((img_poly_0, img_poly_1, img_poly_2), dim=0)
-
-        # Convert image to tensor
-        img = ToTensor()(img)
+        # Apply transformations
+        if self.transform:
+            transformed = self.transform(image=img, mask=mask)
+            img = transformed["image"]
+            mask = transformed["mask"]
+        else:
+            raise ValueError("Transformations must be provided")
 
         return img, mask
