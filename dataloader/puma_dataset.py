@@ -16,14 +16,20 @@ from PIL import Image, ImageDraw
 class PumaDataset(torch.utils.data.Dataset):
     """
     Dataloader for the PUMA dataset.
+    Loads images and their corresponding masks.
+    Peforms augmentations using Albumentations.
+    After augmentation, horizontal and vertical maps are generated.
     """
-    def __init__(self, image_dir, geojson_dir, transform=None):
+
+    def __init__(self,
+        image_dir,
+        geojson_dir,
+        transform=None):
         """        
         Args:
         - image_dir (string): Directory with all the images.
         - geojson_dir (string): Directory with all the geojson files.
-        - transform_image (callable, optional): Optional transform to be applied on an image.
-        - transform_geojson (callable, optional): Optional transform to be applied on a geojson.
+        - transform (callable): Transform to apply to image and mask.
         """
         self.image_dir      = image_dir
         self.geojson_dir    = geojson_dir
