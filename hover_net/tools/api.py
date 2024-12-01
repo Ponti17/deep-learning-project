@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from hover_net.dataloader import get_dataloader
 from hover_net.postprocess import process
 from hover_net.process import infer_step, visualize_instances_dict
-from hover_net.tools.coco import parse_single_instance
-
 
 def infer_one_image(
     image_path,
@@ -71,3 +69,38 @@ def infer_one_image(
                 plt.show()
 
     return inst_info_dict, detection_list, segmentation_list
+
+def parse_single_instance(image_id, single_inst_info):
+    # bbox
+    x = single_inst_info['bbox'][0][1]
+    y = single_inst_info['bbox'][0][0]
+    width = single_inst_info['bbox'][1][1] - x
+    height = single_inst_info['bbox'][1][0] - y
+
+    # category_id
+    category_id = single_inst_info['type']
+
+    # score
+    score = single_inst_info['type_prob']
+
+    # rle
+    mask = np.zeros((512, 512), dtype="uint8")
+    mask = cv2.drawContours(mask, [single_inst_info['contour']], -1, 255, -1)
+    mask = mask.astype(bool)
+    mask = np.asfortranarray(mask.astype(np.uint8))
+    rle = encode(mask)
+
+    detection_dict = {
+        "image_id": image_id,
+        "category_id": category_id,
+        "bbox": [x, y, width, height],
+        "score": score
+    }
+
+    segmentation_dict = {
+        "image_id": image_id,
+        "category_id": category_id,
+        "segmentation": rle,
+        "score": score
+    }
+    return detection_dict, segmentation_dict

@@ -1,6 +1,5 @@
 from torch.utils.data import DataLoader
 
-from hover_net.datasets.coco_dataset import COCODataset
 from hover_net.datasets.consep_dataset import CoNSePDataset
 from hover_net.datasets.inference_dataset import (FolderInferenceDataset,
                                                   SingleInferenceDataset)
@@ -33,17 +32,6 @@ def get_dataloader(
             mask_shape=mask_shape,
             run_mode=run_mode,
             setup_augmentor=True,
-        )
-    elif dataset_type.lower() == "coco":
-        assert ann_file is not None
-        assert classes is not None
-        test_mode = False if run_mode == "train" else True
-        dataset = COCODataset(
-            ann_file=ann_file,
-            classes=classes,
-            input_shape=input_shape,
-            mask_shape=mask_shape,
-            test_mode=test_mode,
         )
     else:
         raise NotImplementedError
