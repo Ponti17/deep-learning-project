@@ -1,13 +1,16 @@
-import argparse
 import os
+import argparse
 
+# ML
 import torch
 import torch.optim as optim
 
+# Neptune for logging
 import neptune
 from neptune_pytorch import NeptuneLogger
 from neptune.utils import stringify_unsupported
 
+# Custom modules
 from hover_net.dataloader.dataset import get_dataloader
 from hover_net.models import HoVerNetExt
 from hover_net.process import proc_valid_step_output, train_step, valid_step
@@ -20,8 +23,12 @@ def get_dir():
     """
     return os.path.dirname(os.path.realpath(__file__))
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Train model with PanNuck dataset")
+def main():
+    """
+    Main function to train model with PUMA dataset
+    """
+    # User must parse the config file
+    parser = argparse.ArgumentParser("Train model with PUMA dataset")
     parser.add_argument(
         "--config",
         "-c",
@@ -148,3 +155,6 @@ if __name__ == "__main__":
 
     npt_logger.log_model("model")
     run.stop()
+
+if __name__ == "__main__":
+    main()
