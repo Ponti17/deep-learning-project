@@ -41,7 +41,7 @@ def main():
     config = read_yaml(args.config)
 
     train_dataloader = get_dataloader(
-        dataset_type="consep",
+        dataset_type="puma",
         data_path=config["DATA"]["TRAIN_DATA_PATH"],
         with_type=True,
         input_shape=(
@@ -56,7 +56,7 @@ def main():
         run_mode="train",
     )
     val_dataloader = get_dataloader(
-        dataset_type="consep",
+        dataset_type="puma",
         data_path=config["DATA"]["VALID_DATA_PATH"],
         with_type=True,
         input_shape=(
