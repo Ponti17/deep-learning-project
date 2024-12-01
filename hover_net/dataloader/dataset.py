@@ -13,8 +13,6 @@ def get_dataloader(
     mask_shape=None,
     batch_size=1,
     run_mode="train",
-    ann_file=None,
-    classes=None,
 ):
     if run_mode == "inference_folder":
         dataset = FolderInferenceDataset(
