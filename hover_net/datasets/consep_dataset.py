@@ -18,7 +18,7 @@ from hover_net.dataloader.preprocessing import cropping_center, gen_targets
 from .hover_dataset import HoVerDatasetBase
 
 
-class CoNSePDataset(HoVerDatasetBase):
+class PumaDataset(HoVerDatasetBase):
     """Data Loader. Loads images from a file list and
     performs augmentation with the albumentation library.
     After augmentation, horizontal and vertical maps are

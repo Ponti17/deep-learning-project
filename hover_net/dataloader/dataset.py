@@ -1,9 +1,8 @@
 from torch.utils.data import DataLoader
 
-from hover_net.datasets.consep_dataset import CoNSePDataset
+from hover_net.datasets.consep_dataset import PumaDataset
 from hover_net.datasets.inference_dataset import (FolderInferenceDataset,
                                                   SingleInferenceDataset)
-
 
 def get_dataloader(
     dataset_type=None,
@@ -31,7 +30,7 @@ def get_dataloader(
             data_path_list=data_path, input_shape=input_shape
         )
     elif dataset_type.lower() == "consep":
-        dataset = CoNSePDataset(
+        dataset = PumaDataset(
             data_path=data_path,
             with_type=with_type,
             input_shape=input_shape,
