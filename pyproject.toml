@@ -26,9 +26,10 @@ neptune-pytorch = "^2.0.0"
 graphviz        = "^0.20.3"
 albumentations  = "^1.4.21"
 scikit-image    = "^0.24.0"
-terminaltables = "^3.1.10"
-imgaug = "^0.4.0"
-pycocotools = "^2.0.8"
+terminaltables  = "^3.1.10"
+imgaug          = "^0.4.0"
+pycocotools     = "^2.0.8"
+tidecv          = "^1.0.1"
 
 [[tool.poetry.source]]
 name            = "torch-gpu"
