@@ -36,11 +36,11 @@ def get_dataloader(
     else:
         raise NotImplementedError
 
-    sulffle = True if run_mode == "train" else False
+    shuffle = True if run_mode == "train" else False
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=sulffle,
+        shuffle=shuffle,
         num_workers=0,
         pin_memory=True
     )
