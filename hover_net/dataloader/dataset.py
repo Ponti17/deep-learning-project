@@ -14,6 +14,14 @@ def get_dataloader(
     batch_size=1,
     run_mode="train",
 ):
+    """
+    Get dataloader for training, validation, inference.
+
+    When run_mode is "train" or "val", the dataloader is created for training
+    or validation. When run_mode is "inference_folder", the dataloader is
+    created for inference on several image in a folder. When run_mode is 
+    "inference_single", the dataloader is created for inference on a single image.
+    """
     if run_mode == "inference_folder":
         dataset = FolderInferenceDataset(
             data_path=data_path, input_shape=input_shape
