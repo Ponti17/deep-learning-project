@@ -4,6 +4,12 @@
 # Whitelist .keep to keep the directory when cloning
 !**/data/.keep
 
+# Blacklist all pretrained in data
+**/pretrained/*
+
+# Whitelist .keep to keep the directory when cloning
+!**/pretrained/.keep
+
 # LaTeX
 **/out/
 **/build/
