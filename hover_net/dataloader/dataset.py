@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader
 
-from hover_net.datasets.consep_dataset import PumaDataset
+from hover_net.datasets.puma_dataset import PumaDataset
 
 def get_dataloader(
     dataset_type = None,
