@@ -19,37 +19,67 @@ from .hover_dataset import HoVerDatasetBase
 
 
 class PumaDataset(HoVerDatasetBase):
-    """Data Loader. Loads images from a file list and
-    performs augmentation with the albumentation library.
-    After augmentation, horizontal and vertical maps are
-    generated.
+    """
+    Data loader for the PUMA dataset.
+
+    Target images are generated from the GeoJSON files using ImageDraw.
+    Images and targets are augmented using the albumentation library.
+    After augmentation, horizontal and vertical maps are generated.
+
+    The images and corresponding GeoJSON files are found by os.listdir().
+    It is there VERY important that their naming schemes are the same so they
+    are in the correct order.
+
     Args:
-        file_list: list of filenames to load
+        image_path: path to the image directory
+        geojson_path: path to the geojson directory
         input_shape: shape of the input [h,w] - defined in config.py
         mask_shape: shape of the output [h,w] - defined in config.py
-        mode: 'train' or 'valid'
-
+        mode: 'train', 'valid'
     """
 
     def __init__(
         self,
-        data_path,
+        image_path,
+        geojson_path,
         with_type=False,
         input_shape=None,
         mask_shape=None,
         run_mode="train",
         setup_augmentor=True,
     ):
-        assert input_shape is not None and mask_shape is not None
-        self.run_mode = run_mode
-        # self.image_dir = image_dir
-        # self.geojson_dir = geojson_dir
+        if run_mode not in ["train", "valid"]:
+            raise ValueError("Invalid mode. Must be 'train', 'valid' or 'test'.")
+        if input_shape is None or mask_shape is None:
+            raise ValueError("input_shape and mask_shape must be defined.")
+
+        self.run_mode    = run_mode
+        self.image_dir   = image_path
+        self.geojson_dir = geojson_path
 
         self.image_dir = 'data/01_training_dataset_tif_ROIs'
         self.geojson_dir = 'data/01_training_dataset_geojson_nuclei'
 
         self.images     = os.listdir(self.image_dir)
         self.geojsons   = os.listdir(self.geojson_dir)
+
+        self.primary_rois_images      = [image for image in self.images if 'primary' in image].sort()
+        self.metastatic_rois_images   = [image for image in self.images if 'metastatic' in image].sort()
+        self.primary_rois_geojsons    = [geojson for geojson in self.geojsons if 'primary' in geojson].sort()
+        self.metastatic_rois_geojsons = [geojson for geojson in self.geojsons if 'metastatic' in geojson].sort()
+
+        self.num_data = len(self.images)
+
+        # 70% train, 15% val, 15% test
+        if run_mode == "train":
+            self.images = self.primary_rois_images[:int(0.7 * self.num_data)] + self.metastatic_rois_images[:int(0.7 * self.num_data)]
+            self.geojsons = self.primary_rois_geojsons[:int(0.7 * self.num_data)] + self.metastatic_rois_geojsons[:int(0.7 * self.num_data)]
+        elif run_mode == "valid":
+            self.images = self.primary_rois_images[int(0.7 * self.num_data):int(0.85*self.num_data)] + self.metastatic_rois_images[int(0.7 * self.num_data):int(0.85*self.num_data)]
+            self.geojson = self.primary_rois_geojson[int(0.7 * self.num_data):int(0.85*self.num_data)] + self.metastatic_rois_geojson[int(0.7 * self.num_data):int(0.85*self.num_data)]
+        elif run_mode == "test":
+            self.images = self.primary_rois_images[int(0.85 * self.num_data):] + self.metastatic_rois_images[int(0.85 * self.num_data):]
+            self.geojsons = self.primary_rois_geojsons[int(0.85 * self.num_data):] + self.metastatic_rois_geojsons[int(0.85 * self.num_data):]
 
         # Polygon class labels
         self.classes = {
