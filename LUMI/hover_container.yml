@@ -2,30 +2,27 @@ name: hover_container
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
-  - numpy<2.0.0
-  - matplotlib=3.9.2
-  - torch=2.4.0+cu124
-  - torchvision=0.19.0+cu124
-  - torchaudio=2.4.1+cu124
-  - jupyterlab=4.2.5
-  - scikit-learn=1.5.1
-  - mlxtend=0.23.1
-  - torch-summary=1.4.5
-  - pillow=10.4.0
-  - torchviz=0.0.2
-  - tqdm=4.66.5
-  - ipywidgets=8.1.5
-  - shapely=2.0.6
-  - neptune=1.13.0
-  - neptune-pytorch=2.0.0
-  - graphviz=0.20.3
-  - albumentations=1.4.21
-  - scikit-image=0.24.0
-  - terminaltables=3.1.10
-  - imgaug=0.4.0
-  - pycocotools=2.0.8
-  - tidecv=1.0.1
+  - python
+  - numpy
+  - matplotlib
+  - jupyterlab
+  - scikit-learn
+  - mlxtend
+  - torch-summary
+  - pillow
+  - torchviz
+  - tqdm
+  - ipywidgets
+  - shapely
+  - neptune
+  - neptune-pytorch
+  - graphviz
+  - albumentations
+  - scikit-image
+  - terminaltables
+  - imgaug
+  - pycocotools
+  - tidecv
 - pip:
   - --extra-index-url https://download.pytorch.org/whl/rocm6.0
   - torch==2.4+rocm6.0
