@@ -27,7 +27,9 @@ def train_step(
     npt_logger=None,
     run=None,
 ):
-    # TODO: synchronize the attach protocol
+    """
+    Train the hover-net.
+    """
     loss_func_dict = {
         "bce": xentropy_loss,
         "dice": dice_loss,
