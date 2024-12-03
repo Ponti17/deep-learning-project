@@ -106,8 +106,9 @@ def train_step(
     loss.backward()
     optimizer.step()
 
-    run[npt_logger.base_namespace]["batch/loss"].append(f"{result_dict['EMA']['overall_loss']:.4f}")
-    npt_logger.log_checkpoint()
+    if (step + 1) % 50 == 0:
+        run[npt_logger.base_namespace]["batch/loss"].append(f"{result_dict['EMA']['overall_loss']:.4f}")
+        npt_logger.log_checkpoint()
 
     # Print epoch and loss
     if verbose:
