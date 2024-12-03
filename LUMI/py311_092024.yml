@@ -1,0 +1,25 @@
+name: py311_062024
+channels:
+- conda-forge
+dependencies:
+- python=3.11
+- mne
+- mne-bids
+- neptune
+- lightning
+- matplotlib
+- numpy
+- scikit-learn
+- ray-tune
+- optuna
+- tabulate
+- pandas
+- pip
+- h5py
+- wandb
+- pyarrow
+- pip:
+    - --extra-index-url https://download.pytorch.org/whl/rocm6.0
+    - torch==2.4+rocm6.0
+    - torchaudio==2.4+rocm6.0
+    - torchvision==0.19+rocm6.0
