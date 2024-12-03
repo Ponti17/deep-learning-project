@@ -63,23 +63,25 @@ class PumaDataset(HoVerDatasetBase):
         self.images     = os.listdir(self.image_dir)
         self.geojsons   = os.listdir(self.geojson_dir)
 
-        self.primary_rois_images      = [image for image in self.images if 'primary' in image].sort()
-        self.metastatic_rois_images   = [image for image in self.images if 'metastatic' in image].sort()
-        self.primary_rois_geojsons    = [geojson for geojson in self.geojsons if 'primary' in geojson].sort()
-        self.metastatic_rois_geojsons = [geojson for geojson in self.geojsons if 'metastatic' in geojson].sort()
+        self.primary_rois_images      = sorted([image for image in self.images if 'primary' in image])
+        self.metastatic_rois_images   = sorted([image for image in self.images if 'metastatic' in image])
+        self.primary_rois_geojsons    = sorted([geojson for geojson in self.geojsons if 'primary' in geojson])
+        self.metastatic_rois_geojsons = sorted([geojson for geojson in self.geojsons if 'metastatic' in geojson])
 
         self.num_data = len(self.images)
+        train_idx_split = int(0.7 * self.num_data)
+        valid_idx_split = int(0.85 * self.num_data)
 
         # 70% train, 15% val, 15% test
         if run_mode == "train":
-            self.images = self.primary_rois_images[:int(0.7 * self.num_data)] + self.metastatic_rois_images[:int(0.7 * self.num_data)]
-            self.geojsons = self.primary_rois_geojsons[:int(0.7 * self.num_data)] + self.metastatic_rois_geojsons[:int(0.7 * self.num_data)]
+            self.images = self.primary_rois_images[:train_idx_split] + self.metastatic_rois_images[:train_idx_split]
+            self.geojsons = self.primary_rois_geojsons[:train_idx_split] + self.metastatic_rois_geojsons[:train_idx_split]
         elif run_mode == "valid":
-            self.images = self.primary_rois_images[int(0.7 * self.num_data):int(0.85*self.num_data)] + self.metastatic_rois_images[int(0.7 * self.num_data):int(0.85*self.num_data)]
-            self.geojson = self.primary_rois_geojson[int(0.7 * self.num_data):int(0.85*self.num_data)] + self.metastatic_rois_geojson[int(0.7 * self.num_data):int(0.85*self.num_data)]
+            self.images = self.primary_rois_images[train_idx_split:valid_idx_split] + self.metastatic_rois_images[train_idx_split:valid_idx_split]
+            self.geojson = self.primary_rois_geojsons[train_idx_split:valid_idx_split] + self.metastatic_rois_geojsons[train_idx_split:valid_idx_split]
         elif run_mode == "test":
-            self.images = self.primary_rois_images[int(0.85 * self.num_data):] + self.metastatic_rois_images[int(0.85 * self.num_data):]
-            self.geojsons = self.primary_rois_geojsons[int(0.85 * self.num_data):] + self.metastatic_rois_geojsons[int(0.85 * self.num_data):]
+            self.images = self.primary_rois_images[valid_idx_split:] + self.metastatic_rois_images[valid_idx_split:]
+            self.geojsons = self.primary_rois_geojsons[valid_idx_split:] + self.metastatic_rois_geojsons[valid_idx_split:]
 
         # Polygon class labels
         self.classes = {
