@@ -67,13 +67,12 @@ def gen_instance_hv_map(ann, crop_shape):
     nuclear instance.
 
     """
-    # print(ann.shape)
     orig_ann = ann.copy()  # instance ID map
     fixed_ann = fix_mirror_padding(orig_ann)
-    # print(fixed_ann.shape)
+
     # re-cropping with fixed instance id map
     crop_ann = cropping_center(fixed_ann, crop_shape)
-    # print(crop_ann.shape)
+
     # TODO: deal with 1 label warning
     crop_ann = morph.remove_small_objects(crop_ann, min_size=30)
 
@@ -83,7 +82,6 @@ def gen_instance_hv_map(ann, crop_shape):
     inst_list = list(np.unique(crop_ann))
     inst_list.remove(0)  # 0 is background
     for inst_id in inst_list:
-        # print(inst_id)
         inst_map = np.array(fixed_ann == inst_id, np.uint8)
         inst_box = get_bounding_box(inst_map)
 
