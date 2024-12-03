@@ -42,7 +42,8 @@ def main():
 
     train_dataloader = get_dataloader(
         dataset_type="puma",
-        data_path=config["DATA"]["TRAIN_DATA_PATH"],
+        image_path=config["DATA"]["IMAGE_PATH"],
+        geojson_path=config["DATA"]["GEOJSON_PATH"],
         with_type=True,
         input_shape=(
             config["DATA"]["PATCH_SIZE"],
@@ -57,7 +58,8 @@ def main():
     )
     val_dataloader = get_dataloader(
         dataset_type="puma",
-        data_path=config["DATA"]["VALID_DATA_PATH"],
+        image_path=config["DATA"]["IMAGE_PATH"],
+        geojson_path=config["DATA"]["GEOJSON_PATH"],
         with_type=True,
         input_shape=(
             config["DATA"]["PATCH_SIZE"],
