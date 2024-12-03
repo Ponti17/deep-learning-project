@@ -148,9 +148,6 @@ class PumaDataset(HoVerDatasetBase):
         ann = np.transpose(ann, (1, 2, 0))
         img = np.array(img).astype("uint8")[:, :, :3]
 
-        print(ann.shape)
-        print(img.shape)
-
         return img, ann
 
     def __len__(self):
