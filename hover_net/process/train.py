@@ -22,7 +22,7 @@ def train_step(
     model,
     optimizer,
     device="cuda",
-    show_step=250,
+    show_step=50,
     verbose=True,
     npt_logger=None,
     run=None,
@@ -30,6 +30,8 @@ def train_step(
     """
     Train the hover-net.
     """
+
+    # Put loss functions in a dictionary
     loss_func_dict = {
         "bce": xentropy_loss,
         "dice": dice_loss,
@@ -49,7 +51,7 @@ def train_step(
     imgs = imgs.to(device).type(torch.float32)
     imgs = imgs.permute(0, 3, 1, 2).contiguous()  # to NCHW
 
-    # HWC
+    # Nuclear Pixel (NP) and Hover Vector (HV) are the targets
     true_np = true_np.to(device).type(torch.int64)
     true_hv = true_hv.to(device).type(torch.float32)
 
@@ -66,10 +68,13 @@ def train_step(
         true_tp_onehot = true_tp_onehot.type(torch.float32)
         true_dict["tp"] = true_tp_onehot
 
-    ####
+    # Forward pass
     model.train()
-    model.zero_grad()  # not rnn so not accumulate
+    model.zero_grad()
 
+    # Pass NP, HV, and TP through the model
+    # Permute to NHWC
+    # We are doing segmentation, so softmax is applied to the NP and TP
     pred_dict = model(imgs)
     pred_dict = OrderedDict(
         [[k, v.permute(0, 2, 3, 1).contiguous()] for k, v in pred_dict.items()]
@@ -78,7 +83,8 @@ def train_step(
     if model.num_types is not None:
         pred_dict["tp"] = F.softmax(pred_dict["tp"], dim=-1)
 
-    ####
+    # Loss calulcation
+    # Loop through the branches e.g. NP, HV, TP
     loss = 0
     for branch_name in pred_dict.keys():
         for loss_name, loss_weight in loss_opts[branch_name].items():
@@ -95,21 +101,19 @@ def train_step(
             loss += loss_weight * term_loss
 
     track_value("overall_loss", loss.cpu().item())
-    # * gradient update
 
-    # torch.set_printoptions(precision=10)
+    # Backward pass
     loss.backward()
     optimizer.step()
-    ####
+
     run[npt_logger.base_namespace]["batch/loss"].append(f"{result_dict['EMA']['overall_loss']:.4f}")
     npt_logger.log_checkpoint()
+
+    # Print epoch and loss
     if verbose:
         out = f"[Epoch {epoch + 1:3d}] {step + 1:4d} || "
         out += f"overall_loss {result_dict['EMA']['overall_loss']:.4f}"
-        print(
-            out,
-            end="\r",
-        )
+        print(out)
 
     if ((step + 1) % show_step) == 0:
         # pick 2 random sample from the batch for visualization
