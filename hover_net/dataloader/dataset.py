@@ -1,17 +1,16 @@
 from torch.utils.data import DataLoader
 
 from hover_net.datasets.consep_dataset import PumaDataset
-from hover_net.datasets.inference_dataset import (FolderInferenceDataset,
-                                                  SingleInferenceDataset)
 
 def get_dataloader(
-    dataset_type=None,
-    data_path=None,
-    with_type=True,
-    input_shape=None,
-    mask_shape=None,
-    batch_size=1,
-    run_mode="train",
+    dataset_type = None,
+    image_path   = None,
+    geojson_path = None,
+    with_type    = True,
+    input_shape  = None,
+    mask_shape   = None,
+    batch_size   = 1,
+    run_mode     = "train",
 ):
     """
     Get dataloader for training, validation, inference.
@@ -21,17 +20,10 @@ def get_dataloader(
     created for inference on several image in a folder. When run_mode is 
     "inference_single", the dataloader is created for inference on a single image.
     """
-    if run_mode == "inference_folder":
-        dataset = FolderInferenceDataset(
-            data_path=data_path, input_shape=input_shape
-        )
-    elif run_mode == "inference_single":
-        dataset = SingleInferenceDataset(
-            data_path_list=data_path, input_shape=input_shape
-        )
-    elif dataset_type.lower() == "consep":
+    if dataset_type.lower() == "puma":
         dataset = PumaDataset(
-            data_path=data_path,
+            image_path=image_path,
+            geojson_path=geojson_path,
             with_type=with_type,
             input_shape=input_shape,
             mask_shape=mask_shape,
