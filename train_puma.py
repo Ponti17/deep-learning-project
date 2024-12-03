@@ -7,8 +7,6 @@ import torch.optim as optim
 
 # Neptune for logging
 import neptune
-from neptune_pytorch import NeptuneLogger
-from neptune.utils import stringify_unsupported
 
 # Custom modules
 from hover_net.dataloader.dataset import get_dataloader
@@ -99,13 +97,6 @@ def main():
         api_token=neptune_api_token
     )
 
-    npt_logger = NeptuneLogger(
-        run=run,
-        model=model,
-        log_parameters=False,
-        log_freq=100
-    )
-
     for epoch in range(config['TRAIN']['EPOCHS']):
         accumulated_output = {}
         for step_idx, data in enumerate(train_dataloader):
@@ -118,7 +109,6 @@ def main():
                 device=config["TRAIN"]["DEVICE"],
                 show_step=1,
                 verbose=config["LOGGING"]["VERBOSE"],
-                npt_logger=npt_logger,
                 run=run,
             )
 
@@ -154,9 +144,6 @@ def main():
         model.state_dict(),
         os.path.join(config["LOGGING"]["SAVE_PATH"], "latest.pth")
     )
-
-    npt_logger.log_model("model")
-    run.stop()
 
 if __name__ == "__main__":
     main()
