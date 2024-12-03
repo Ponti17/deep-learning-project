@@ -1,5 +1,6 @@
 DATA:
-  TRAIN_DATA_PATH: "./data"
+  IMAGE_PATH: "./data/01_training_dataset_tif_ROIs"
+  GEOJSON_PATH: "./data/01_training_dataset_geojson_nuclei"
   VALID_DATA_PATH: "./data"
   NUM_TYPES: 4
   PATCH_SIZE: 256
