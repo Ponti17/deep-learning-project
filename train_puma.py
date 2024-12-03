@@ -70,7 +70,7 @@ def main():
             config["DATA"]["PATCH_SIZE"]
         ),
         batch_size=config["TRAIN"]["BATCH_SIZE"],
-        run_mode="val",
+        run_mode="valid",
     )
 
     model = HoVerNetExt(
@@ -102,8 +102,8 @@ def main():
     npt_logger = NeptuneLogger(
         run=run,
         model=model,
-        log_parameters=True,
-        log_freq=1
+        log_parameters=False,
+        log_freq=100
     )
 
     for epoch in range(config['TRAIN']['EPOCHS']):
