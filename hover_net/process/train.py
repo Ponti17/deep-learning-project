@@ -20,7 +20,6 @@ def train_step(
     device="cuda",
     show_step=50,
     verbose=True,
-    run=None,
 ):
     """
     Train the hover-net.

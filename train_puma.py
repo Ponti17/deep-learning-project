@@ -98,7 +98,6 @@ def main():
                 device=config["TRAIN"]["DEVICE"],
                 show_step=1,
                 verbose=config["LOGGING"]["VERBOSE"],
-                run=run,
             )
 
         for step_idx, data in enumerate(val_dataloader):
