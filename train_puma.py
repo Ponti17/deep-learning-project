@@ -8,15 +8,20 @@ import torch.optim as optim
 # Custom modules
 from hover_net.dataloader.dataset import get_dataloader
 from hover_net.models import HoVerNetExt
-from hover_net.process import proc_valid_step_output, train_step, valid_step
-from hover_net.tools.utils import (dump_yaml, read_yaml,
-                                   update_accumulated_output)
+from hover_net.process import proc_valid_step_output, train_step, valid_step 
+from hover_net.tools.utils import (dump_yaml, read_yaml, update_accumulated_output)
+
+import neptune
+from neptune.types import File
+
 
 def get_dir():
     """
     Returns the directory of main
     """
     return os.path.dirname(os.path.realpath(__file__))
+
+
 
 def main():
     """
@@ -31,10 +36,43 @@ def main():
         required=True,
         help="yaml config file path"
     )
+    parser.add_argument(
+        "--neptune_project",
+        type=str,
+        required=False,
+        help="Neptune project name (optional, defaults to env NEPTUNE_PROJECT)"
+    )
     args = parser.parse_args()
 
     config = read_yaml(args.config)
 
+
+    # Load the Neptune API key from the file
+    with open("neptune_api.key", "r") as f:
+        neptune_api_key = f.read().strip()
+
+    # Determine the Neptune project
+    neptune_project = args.neptune_project or os.getenv("NEPTUNE_PROJECT")
+    if not neptune_project:
+        raise ValueError(
+            "Neptune project name is required. "
+            "Provide it via the --neptune_project argument or set the NEPTUNE_PROJECT environment variable."
+        )
+
+    # Initialize Neptune
+    run = neptune.init_run(
+        project=neptune_project,
+        api_token=neptune_api_key
+    )
+    run["config"] = config
+
+    loss_opts = {
+        "np": {"bce": 1, "dice": 1},
+        "hv": {"mse": 1, "msge": 1},
+        "tp": {"bce": 1, "dice": 1},
+    }
+
+    # Training and Validation Loops
     train_dataloader = get_dataloader(
         dataset_type="puma",
         image_path=config["DATA"]["IMAGE_PATH"],
@@ -87,6 +125,9 @@ def main():
     )
 
     for epoch in range(config['TRAIN']['EPOCHS']):
+        run["training/epoch"].log(epoch + 1)
+
+        # Training loop
         accumulated_output = {}
         for step_idx, data in enumerate(train_dataloader):
             train_result_dict = train_step(
@@ -95,11 +136,14 @@ def main():
                 batch_data=data,
                 model=model,
                 optimizer=optimizer,
+                loss_opts=loss_opts,
                 device=config["TRAIN"]["DEVICE"],
                 show_step=1,
                 verbose=config["LOGGING"]["VERBOSE"],
+                run=run  # Pass Neptune run
             )
 
+        # Validation loop
         for step_idx, data in enumerate(val_dataloader):
             valid_result_dict = valid_step(
                 epoch,
@@ -112,6 +156,11 @@ def main():
 
         out_dict = proc_valid_step_output(accumulated_output)
 
+        # Log validation metrics to Neptune
+        run["validation/accuracy"].log(out_dict["scalar"]["np_acc"])
+        run["validation/dice"].log(out_dict["scalar"]["np_dice"])
+        run["validation/mse"].log(out_dict["scalar"]["hv_mse"])
+
         print(
             f"[Epoch {epoch + 1} / {config['TRAIN']['EPOCHS']}] Val || "
             f"ACC={out_dict['scalar']['np_acc']:.3f} || "
@@ -119,19 +168,23 @@ def main():
             f"MSE={out_dict['scalar']['hv_mse']:.3f}"
         )
 
+        # Save model periodically and log to Neptune
         if (epoch + 1) % config["LOGGING"]["SAVE_STEP"] == 0:
-            torch.save(
-                model.state_dict(),
-                os.path.join(
-                    config["LOGGING"]["SAVE_PATH"],
-                    f"epoch_{epoch + 1}.pth"
-                )
+            model_path = os.path.join(
+                config["LOGGING"]["SAVE_PATH"],
+                f"epoch_{epoch + 1}.pth"
             )
+            torch.save(model.state_dict(), model_path)
+            run[f"model/epoch_{epoch + 1}"].upload(File(model_path))
 
-    torch.save(
-        model.state_dict(),
-        os.path.join(config["LOGGING"]["SAVE_PATH"], "latest.pth")
-    )
+    # Save the final model
+    final_model_path = os.path.join(config["LOGGING"]["SAVE_PATH"], "latest.pth")
+    torch.save(model.state_dict(), final_model_path)
+    run["model/latest"].upload(File(final_model_path))
+
+    # Stop Neptune run
+    run.stop()
+
 
 if __name__ == "__main__":
     main()
