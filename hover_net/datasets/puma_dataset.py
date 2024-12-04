@@ -37,7 +37,7 @@ class PumaDataset(HoVerDatasetBase):
         self,
         image_path,
         geojson_path,
-        with_type=False,
+        with_type=True,
         input_shape=None,
         mask_shape=None,
         run_mode="train",
@@ -65,20 +65,26 @@ class PumaDataset(HoVerDatasetBase):
         self.primary_rois_geojsons    = sorted([geojson for geojson in self.geojsons if 'primary' in geojson])
         self.metastatic_rois_geojsons = sorted([geojson for geojson in self.geojsons if 'metastatic' in geojson])
 
-        self.num_data = len(self.images)
-        train_idx_split = int(0.7 * self.num_data)
-        valid_idx_split = int(0.85 * self.num_data)
+        num_pri = len(self.primary_rois_images)     # Number of primary ROIs
+        num_met = len(self.metastatic_rois_images)  # Number of metastatic ROIsz
+        train_idx_pri = int(0.7 * num_pri)          # Splitting index for train primary ROIs
+        train_idx_met = int(0.7 * num_met)          # Splitting index for train metastatic ROIs
+        valid_idx_pri = int(0.85 * num_pri)          # Splitting index for validation primary ROIs
+        valid_idx_met = int(0.85 * num_met)          # Splitting index for validation metastatic ROIs
+
+        print(f"Number of primary ROIs: {num_pri}")
+        print(f"Number of metastatic ROIs: {num_met}")
 
         # 70% train, 15% val, 15% test
         if run_mode == "train":
-            self.images = self.primary_rois_images[:train_idx_split] + self.metastatic_rois_images[:train_idx_split]
-            self.geojsons = self.primary_rois_geojsons[:train_idx_split] + self.metastatic_rois_geojsons[:train_idx_split]
+            self.images = self.primary_rois_images[:train_idx_pri] + self.metastatic_rois_images[:train_idx_met]
+            self.geojsons = self.primary_rois_geojsons[:train_idx_pri] + self.metastatic_rois_geojsons[:train_idx_met]
         elif run_mode == "valid":
-            self.images = self.primary_rois_images[train_idx_split:valid_idx_split] + self.metastatic_rois_images[train_idx_split:valid_idx_split]
-            self.geojson = self.primary_rois_geojsons[train_idx_split:valid_idx_split] + self.metastatic_rois_geojsons[train_idx_split:valid_idx_split]
+            self.images = self.primary_rois_images[train_idx_pri:valid_idx_pri] + self.metastatic_rois_images[train_idx_met:valid_idx_met]
+            self.geojson = self.primary_rois_geojsons[train_idx_pri:valid_idx_pri] + self.metastatic_rois_geojsons[train_idx_met:valid_idx_met]
         elif run_mode == "test":
-            self.images = self.primary_rois_images[valid_idx_split:] + self.metastatic_rois_images[valid_idx_split:]
-            self.geojsons = self.primary_rois_geojsons[valid_idx_split:] + self.metastatic_rois_geojsons[valid_idx_split:]
+            self.images = self.primary_rois_images[valid_idx_pri:] + self.metastatic_rois_images[valid_idx_met:]
+            self.geojsons = self.primary_rois_geojsons[valid_idx_pri:] + self.metastatic_rois_geojsons[valid_idx_met:]
 
         # Polygon class labels
         self.classes = {
