@@ -21,6 +21,8 @@ def viz_step_output(raw_data, nr_types=None):
     if nr_types is not None:
         true_tp, pred_tp = raw_data["tp"]
 
+    true_np = np.repeat(true_np[..., np.newaxis], 3, axis=-1)  # Shape becomes (8, 256, 256, 3)
+    pred_np = np.repeat(pred_np[..., np.newaxis], 3, axis=-1)
     aligned_shape = [
         list(imgs.shape), list(true_np.shape), list(pred_np.shape)
     ]
@@ -48,7 +50,7 @@ def viz_step_output(raw_data, nr_types=None):
 
         true_viz_list = [img]
         # cmap may randomly fails if of other types
-        true_viz_list.append(colorize(true_np[idx], 0, 1))
+        true_viz_list.append(colorize(true_np[idx][..., 1], 0, 1))
         true_viz_list.append(colorize(true_hv[idx][..., 0], -1, 1))
         true_viz_list.append(colorize(true_hv[idx][..., 1], -1, 1))
         if nr_types is not None:  # TODO: a way to pass through external info
@@ -57,7 +59,7 @@ def viz_step_output(raw_data, nr_types=None):
 
         pred_viz_list = [img]
         # cmap may randomly fails if of other types
-        pred_viz_list.append(colorize(pred_np[idx], 0, 1))
+        pred_viz_list.append(colorize(pred_np[idx][..., 1], 0, 1))
         pred_viz_list.append(colorize(pred_hv[idx][..., 0], -1, 1))
         pred_viz_list.append(colorize(pred_hv[idx][..., 1], -1, 1))
         if nr_types is not None:
