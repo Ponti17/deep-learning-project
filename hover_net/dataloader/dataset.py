@@ -28,7 +28,7 @@ def get_dataloader(
             input_shape=input_shape,
             mask_shape=mask_shape,
             run_mode=run_mode,
-            setup_augmentor=True,
+            augment=True,
         )
     else:
         raise NotImplementedError
