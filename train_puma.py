@@ -5,9 +5,6 @@ import argparse
 import torch
 import torch.optim as optim
 
-# Neptune for logging
-import neptune
-
 # Custom modules
 from hover_net.dataloader.dataset import get_dataloader
 from hover_net.models import HoVerNetExt
@@ -87,14 +84,6 @@ def main():
             "config.yaml"
         ),
         config
-    )
-
-    neptune_api_token = open(f"{get_dir()}/neptune_api.key", "r", encoding="utf-8").read().strip()
-
-    # Initialize neptune.ai
-    run = neptune.init_run(
-        project="ponti-workspace/hover-net",
-        api_token=neptune_api_token
     )
 
     for epoch in range(config['TRAIN']['EPOCHS']):
