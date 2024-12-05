@@ -54,9 +54,6 @@ class PumaDataset(HoVerDatasetBase):
         self.image_dir   = image_path
         self.geojson_dir = geojson_path
 
-        self.image_dir = 'data/01_training_dataset_tif_ROIs'
-        self.geojson_dir = 'data/01_training_dataset_geojson_nuclei'
-
         self.images     = os.listdir(self.image_dir)
         self.geojsons   = os.listdir(self.geojson_dir)
 
