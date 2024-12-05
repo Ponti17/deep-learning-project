@@ -175,7 +175,6 @@ def main():
                 f"epoch_{epoch + 1}.pth"
             )
             torch.save(model.state_dict(), model_path)
-            run[f"model/epoch_{epoch + 1}"].upload(File(model_path))
 
     # Save the final model
     final_model_path = os.path.join(config["LOGGING"]["SAVE_PATH"], "latest.pth")
