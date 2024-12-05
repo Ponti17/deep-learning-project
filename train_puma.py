@@ -111,8 +111,11 @@ def main():
         backbone_name=config["MODEL"]["BACKBONE"],
         pretrained_backbone=config["MODEL"]["PRETRAINED"],
         num_types=config["MODEL"]["NUM_TYPES"],
+        freeze=True
     )
-    optimizer = optim.Adam(model.parameters(), lr=1.0e-4, betas=(0.9, 0.999))
+
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001, weight_decay=1e-5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=25)
 
     model.to(config["TRAIN"]["DEVICE"])
 
@@ -127,6 +130,9 @@ def main():
 
     for epoch in range(config['TRAIN']['EPOCHS']):
         run["training/epoch"].log(epoch + 1)
+
+        if epoch == 10:
+            model.freeze = False
 
         # Training loop
         accumulated_output = {}
@@ -155,6 +161,7 @@ def main():
             )
             update_accumulated_output(accumulated_output, valid_result_dict)
 
+        lr_scheduler.step()
         out_dict = proc_valid_step_output(accumulated_output)
 
         # Log validation metrics to Neptune
