@@ -43,7 +43,7 @@ class PumaDataset(HoVerDatasetBase):
         run_mode="train",
         augment=True,
     ):
-        if run_mode not in ["train", "valid"]:
+        if run_mode not in ["train", "valid", "test"]:
             raise ValueError("Invalid mode. Must be 'train', 'valid' or 'test'.")
         if input_shape is None or mask_shape is None:
             raise ValueError("input_shape and mask_shape must be defined.")
