@@ -115,7 +115,7 @@ def main():
     )
 
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001, weight_decay=1e-5)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=25)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=25, gamma=0.0001)
 
     model.to(config["TRAIN"]["DEVICE"])
 
@@ -131,7 +131,7 @@ def main():
     for epoch in range(config['TRAIN']['EPOCHS']):
         run["training/epoch"].log(epoch + 1)
 
-        if epoch == 10:
+        if epoch == 50:
             model.freeze = False
 
         # Training loop
