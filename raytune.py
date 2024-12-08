@@ -37,12 +37,12 @@ def main(config, yml_config):
 
     lr      = config["lr"]
     weigth_decay = config["weigth_decay"]
-    np_bce     = config["bce"]
-    np_dice    = config["dice"]
-    hv_mse     = config["mse"]
-    hv_msge    = config["msge"]
-    tp_bce     = config["bce"]
-    tp_dice    = config["dice"]
+    np_bce     = config["np_bce"]
+    np_dice    = config["np_dice"]
+    hv_mse     = config["hv_mse"]
+    hv_msge    = config["hv_msge"]
+    tp_bce     = config["tp_bce"]
+    tp_dice    = config["tp_dice"]
     step_size  = config["step_size"]
     gamma      = config["gamma"]
 
