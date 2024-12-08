@@ -98,15 +98,6 @@ def main(config, yml_config):
 
     model.to(yml_config["TRAIN"]["DEVICE"])
 
-    os.makedirs(yml_config["LOGGING"]["SAVE_PATH"], exist_ok=True)
-    dump_yaml(
-        os.path.join(
-            yml_config["LOGGING"]["SAVE_PATH"],
-            "config.yaml"
-        ),
-        yml_config
-    )
-
     for epoch in range(yml_config['TRAIN']['EPOCHS']):
         if epoch == 50:
             model.freeze = False
