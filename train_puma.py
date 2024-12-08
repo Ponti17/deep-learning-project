@@ -153,10 +153,10 @@ def main():
         # Validation loop
         for step_idx, data in enumerate(val_dataloader):
             valid_result_dict = valid_step(
-                epoch,
-                step_idx,
                 batch_data=data,
                 model=model,
+                loss_opts=loss_opts,
+                run=run,
                 device=config["TRAIN"]["DEVICE"]
             )
             update_accumulated_output(accumulated_output, valid_result_dict)
@@ -172,9 +172,6 @@ def main():
 
         print(
             f"[Epoch {epoch + 1} / {config['TRAIN']['EPOCHS']}] Val || "
-            f"ACC={out_dict['scalar']['np_acc']:.3f} || "
-            f"DICE={out_dict['scalar']['np_dice']:.3f} || "
-            f"MSE={out_dict['scalar']['hv_mse']:.3f}"
         )
 
         # Save model periodically and log to Neptune
