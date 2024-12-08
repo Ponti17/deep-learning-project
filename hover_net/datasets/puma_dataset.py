@@ -181,7 +181,7 @@ class PumaDataset(HoVerDatasetBase):
         return feed_dict
 
     def __get_augmentation(self, mode):
-        if mode == "train" or mode == "valid":
+        if mode == "train":
             aug = A.Compose(
                 [
                     A.RandomCrop(height=self.input_shape[0], width=self.input_shape[1]),
@@ -196,7 +196,7 @@ class PumaDataset(HoVerDatasetBase):
                         p=1.0,
                     ),
                     A.HueSaturationValue(hue_shift_limit=8, sat_shift_limit=8, val_shift_limit=8, p=1.0),
-                    A.RandomBrightnessContrast(brightness_limit=0.5, contrast_limit=0.5, p=1.0),
+                    A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=1.0),
                 ]
             )
         else:
