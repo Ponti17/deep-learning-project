@@ -9,7 +9,7 @@ import torch.optim as optim
 from hover_net.dataloader.dataset import get_dataloader
 from hover_net.models import HoVerNetExt
 from hover_net.process import proc_valid_step_output, train_step, valid_step 
-from hover_net.tools.utils import (dump_yaml, read_yaml, update_accumulated_output)
+from hover_net.tools.utils import (dump_yaml, read_yaml)
 
 import neptune
 from neptune.types import File
@@ -129,7 +129,6 @@ def main():
         run["training/epoch"].log(epoch + 1)
 
         # Training loop
-        accumulated_output = {}
         for step_idx, data in enumerate(train_dataloader):
             train_result_dict = train_step(
                 epoch,
@@ -153,7 +152,6 @@ def main():
                 run=run,
                 device=config["TRAIN"]["DEVICE"]
             )
-            update_accumulated_output(accumulated_output, valid_result_dict)
 
         print(
             f"[Epoch {epoch + 1} / {config['TRAIN']['EPOCHS']}] Val || "
