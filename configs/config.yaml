@@ -3,7 +3,7 @@ DATA:
   GEOJSON_PATH: "./data/01_training_dataset_geojson_nuclei"
   VALID_DATA_PATH: "./data"
   NUM_TYPES: 4
-  PATCH_SIZE: 256
+  PATCH_SIZE: 128
 TRAIN:
   DEVICE: "cuda"
   EPOCHS: 50
