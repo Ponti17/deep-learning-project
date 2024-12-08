@@ -16,3 +16,4 @@ LOGGING:
   SAVE_STEP: 5
   SAVE_PATH: "./experiments/consep/"
   VERBOSE: TRUE
+  RUN_NAME: "128x128_patch_size"
