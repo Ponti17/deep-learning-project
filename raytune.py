@@ -141,7 +141,7 @@ def main(config, yml_config):
         lr_scheduler.step()
         out_dict = proc_valid_step_output(accumulated_output)
 
-        session.report({"valid_dice": 100*out_dict['scalar']['np_dice']})
+        session.report({"valid_dice": out_dict["scalar"]["np_dice"]})
 
 if __name__ == "__main__":
     # User must parse the config file
