@@ -208,7 +208,7 @@ if __name__ == "__main__":
     algo = OptunaSearch()
 
     trainable_with_resources = tune.with_resources(
-    tune.with_parameters(main, yml_config),
+    tune.with_parameters(main, yml_config=yml_config),
     {"cpu": 1, "gpu":1})
 
     tuner = tune.Tuner(
