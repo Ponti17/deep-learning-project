@@ -189,19 +189,14 @@ class PumaDataset(HoVerDatasetBase):
                     A.VerticalFlip(p=0.5),
                     A.OneOf(
                         [
-                            A.GaussianBlur(blur_limit=(3, 3), p=0.5),
-                            A.MedianBlur(blur_limit=3, p=0.5),
-                            A.GaussNoise(var_limit=(10.0, 50.0), p=0.5),
+                            A.GaussianBlur(blur_limit=(3, 3), p=1.0),
+                            A.MedianBlur(blur_limit=3, p=1.0),
+                            A.GaussNoise(var_limit=(10.0, 50.0), p=1.0),
                         ],
-                        p=0.5,
+                        p=1.0,
                     ),
-                    A.OneOf(
-                        [
-                            A.HueSaturationValue(hue_shift_limit=8, sat_shift_limit=8, val_shift_limit=8, p=0.5),
-                            A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
-                        ],
-                        p=0.5,
-                    ),
+                    A.HueSaturationValue(hue_shift_limit=8, sat_shift_limit=8, val_shift_limit=8, p=1.0),
+                    A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=1.0),
                 ]
             )
         else:
