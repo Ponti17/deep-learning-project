@@ -61,6 +61,7 @@ def main():
 
     # Initialize Neptune
     run = neptune.init_run(
+        name=config['LOGGING']['RUN_NAME'],
         project=neptune_project,
         api_token=neptune_api_key
     )
@@ -103,7 +104,7 @@ def main():
             config["DATA"]["PATCH_SIZE"]
         ),
         batch_size=config["TRAIN"]["BATCH_SIZE"],
-        run_mode="valid",
+        run_mode="test",
     )
 
     model = HoVerNetExt(
