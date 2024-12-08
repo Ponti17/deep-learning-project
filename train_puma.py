@@ -104,7 +104,7 @@ def main():
             config["DATA"]["PATCH_SIZE"]
         ),
         batch_size=config["TRAIN"]["BATCH_SIZE"],
-        run_mode="valid",
+        run_mode="test",
     )
 
     model = HoVerNetExt(
