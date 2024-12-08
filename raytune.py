@@ -29,10 +29,121 @@ def get_dir():
 
 
 
-def main():
+def main(config, yml_config):
     """
     Main function to train model with PUMA dataset
     """
+    run = None
+
+    lr      = config["lr"]
+    weigth_decay = config["weigth_decay"]
+    np_bce     = config["bce"]
+    np_dice    = config["dice"]
+    hv_mse     = config["mse"]
+    hv_msge    = config["msge"]
+    tp_bce     = config["bce"]
+    tp_dice    = config["dice"]
+    step_size  = config["step_size"]
+    gamma      = config["gamma"]
+
+    loss_opts = {
+        "np": {"bce": np_bce, "dice": np_dice},
+        "hv": {"mse": hv_mse, "msge": hv_msge},
+        "tp": {"bce": tp_bce, "dice": tp_dice},
+    }
+
+    # Training and Validation Loops
+    train_dataloader = get_dataloader(
+        dataset_type="puma",
+        image_path=yml_config["DATA"]["IMAGE_PATH"],
+        geojson_path=yml_config["DATA"]["GEOJSON_PATH"],
+        with_type=True,
+        input_shape=(
+            yml_config["DATA"]["PATCH_SIZE"],
+            yml_config["DATA"]["PATCH_SIZE"]
+        ),
+        mask_shape=(
+            yml_config["DATA"]["PATCH_SIZE"],
+            yml_config["DATA"]["PATCH_SIZE"]
+        ),
+        batch_size=yml_config["TRAIN"]["BATCH_SIZE"],
+        run_mode="train",
+    )
+    val_dataloader = get_dataloader(
+        dataset_type="puma",
+        image_path=yml_config["DATA"]["IMAGE_PATH"],
+        geojson_path=yml_config["DATA"]["GEOJSON_PATH"],
+        with_type=True,
+        input_shape=(
+            yml_config["DATA"]["PATCH_SIZE"],
+            yml_config["DATA"]["PATCH_SIZE"]
+        ),
+        mask_shape=(
+            yml_config["DATA"]["PATCH_SIZE"],
+            yml_config["DATA"]["PATCH_SIZE"]
+        ),
+        batch_size=yml_config["TRAIN"]["BATCH_SIZE"],
+        run_mode="test",
+    )
+
+    model = HoVerNetExt(
+        backbone_name=yml_config["MODEL"]["BACKBONE"],
+        pretrained_backbone=yml_config["MODEL"]["PRETRAINED"],
+        num_types=yml_config["MODEL"]["NUM_TYPES"],
+        freeze=False
+    )
+
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr, weight_decay=weigth_decay)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
+
+    model.to(yml_config["TRAIN"]["DEVICE"])
+
+    os.makedirs(yml_config["LOGGING"]["SAVE_PATH"], exist_ok=True)
+    dump_yaml(
+        os.path.join(
+            yml_config["LOGGING"]["SAVE_PATH"],
+            "config.yaml"
+        ),
+        yml_config
+    )
+
+    for epoch in range(yml_config['TRAIN']['EPOCHS']):
+        if epoch == 50:
+            model.freeze = False
+
+        # Training loop
+        accumulated_output = {}
+        for step_idx, data in enumerate(train_dataloader):
+            train_result_dict = train_step(
+                epoch,
+                step_idx,
+                batch_data=data,
+                model=model,
+                optimizer=optimizer,
+                loss_opts=loss_opts,
+                device=yml_config["TRAIN"]["DEVICE"],
+                show_step=1,
+                verbose=yml_config["LOGGING"]["VERBOSE"],
+                run=run  # Pass Neptune run
+            )
+
+        # Validation loop
+        for step_idx, data in enumerate(val_dataloader):
+            valid_result_dict = valid_step(
+                epoch,
+                step_idx,
+                batch_data=data,
+                model=model,
+                device=yml_config["TRAIN"]["DEVICE"]
+            )
+            update_accumulated_output(accumulated_output, valid_result_dict)
+
+        lr_scheduler.step()
+        out_dict = proc_valid_step_output(accumulated_output)
+
+        session.report({"Valid dice": 100*out_dict['scalar']['np_dice']})
+
+if __name__ == "__main__":
     # User must parse the config file
     parser = argparse.ArgumentParser("Train model with PUMA dataset")
     parser.add_argument(
@@ -50,7 +161,7 @@ def main():
     )
     args = parser.parse_args()
 
-    config = read_yaml(args.config)
+    yml_config = read_yaml(args.config)
 
     # Load the Neptune API key from the file
     with open("neptune_api.key", "r") as f:
@@ -66,11 +177,11 @@ def main():
 
     # Initialize Neptune
     run = neptune.init_run(
-        name=config['LOGGING']['RUN_NAME'],
+        name=yml_config['LOGGING']['RUN_NAME'],
         project=neptune_project,
         api_token=neptune_api_key
     )
-    run["config"] = config
+    run["config"] = yml_config
 
     #number of cpus:
     numGPUs=int(os.getenv('SLURM_GPUS_PER_TASK'))
@@ -81,131 +192,45 @@ def main():
     }
     run["numDevices"] = numDevices
 
-    loss_opts = {
-        "np": {"bce": 1, "dice": 1},
-        "hv": {"mse": 1, "msge": 1},
-        "tp": {"bce": 1, "dice": 1},
+    search_space = {
+        "lr":           tune.uniform(1e-5, 1e-3),
+        "weigth_decay": tune.uniform(1e-6, 1e-4),
+        "np_bce":       tune.uniform(0.5, 2),
+        "np_dice":      tune.uniform(0.5, 2),
+        "hv_mse":       tune.uniform(0.5, 2),
+        "hv_msge":      tune.uniform(0.5, 2),
+        "tp_bce":       tune.uniform(0.5, 2),
+        "tp_dice":      tune.uniform(0.5, 2),
+        "step_size":    tune.randint(5, 25),
+        "gamma":        tune.uniform(1e-6, 1e-4),
     }
 
-    # Training and Validation Loops
-    train_dataloader = get_dataloader(
-        dataset_type="puma",
-        image_path=config["DATA"]["IMAGE_PATH"],
-        geojson_path=config["DATA"]["GEOJSON_PATH"],
-        with_type=True,
-        input_shape=(
-            config["DATA"]["PATCH_SIZE"],
-            config["DATA"]["PATCH_SIZE"]
+    algo = OptunaSearch()
+
+    trainable_with_resources = tune.with_resources(
+    tune.with_parameters(main, yml_config),
+    {"cpu": 1, "gpu":1})
+
+    tuner = tune.Tuner(
+        trainable_with_resources,
+        tune_config=tune.TuneConfig(
+            metric="mean_accuracy",
+            mode="max",
+            search_alg=algo,
+            num_samples=1,
         ),
-        mask_shape=(
-            config["DATA"]["PATCH_SIZE"],
-            config["DATA"]["PATCH_SIZE"]
+        run_config=air.RunConfig(
+            stop={"training_iteration": 1},
         ),
-        batch_size=config["TRAIN"]["BATCH_SIZE"],
-        run_mode="train",
-    )
-    val_dataloader = get_dataloader(
-        dataset_type="puma",
-        image_path=config["DATA"]["IMAGE_PATH"],
-        geojson_path=config["DATA"]["GEOJSON_PATH"],
-        with_type=True,
-        input_shape=(
-            config["DATA"]["PATCH_SIZE"],
-            config["DATA"]["PATCH_SIZE"]
-        ),
-        mask_shape=(
-            config["DATA"]["PATCH_SIZE"],
-            config["DATA"]["PATCH_SIZE"]
-        ),
-        batch_size=config["TRAIN"]["BATCH_SIZE"],
-        run_mode="test",
+        param_space=search_space,
     )
 
-    model = HoVerNetExt(
-        backbone_name=config["MODEL"]["BACKBONE"],
-        pretrained_backbone=config["MODEL"]["PRETRAINED"],
-        num_types=config["MODEL"]["NUM_TYPES"],
-        freeze=True
-    )
+    #if I don't limit num_cpus, ray tries to use the whole node and crashes:
+    ray.init(num_cpus=numCPUs, num_gpus=numGPUs, log_to_driver=False)
 
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001, weight_decay=1e-5)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=25, gamma=0.0001)
-
-    model.to(config["TRAIN"]["DEVICE"])
-
-    os.makedirs(config["LOGGING"]["SAVE_PATH"], exist_ok=True)
-    dump_yaml(
-        os.path.join(
-            config["LOGGING"]["SAVE_PATH"],
-            "config.yaml"
-        ),
-        config
-    )
-
-    for epoch in range(config['TRAIN']['EPOCHS']):
-        run["training/epoch"].log(epoch + 1)
-
-        if epoch == 50:
-            model.freeze = False
-
-        # Training loop
-        accumulated_output = {}
-        for step_idx, data in enumerate(train_dataloader):
-            train_result_dict = train_step(
-                epoch,
-                step_idx,
-                batch_data=data,
-                model=model,
-                optimizer=optimizer,
-                loss_opts=loss_opts,
-                device=config["TRAIN"]["DEVICE"],
-                show_step=1,
-                verbose=config["LOGGING"]["VERBOSE"],
-                run=run  # Pass Neptune run
-            )
-
-        # Validation loop
-        for step_idx, data in enumerate(val_dataloader):
-            valid_result_dict = valid_step(
-                epoch,
-                step_idx,
-                batch_data=data,
-                model=model,
-                device=config["TRAIN"]["DEVICE"]
-            )
-            update_accumulated_output(accumulated_output, valid_result_dict)
-
-        lr_scheduler.step()
-        out_dict = proc_valid_step_output(accumulated_output)
-
-        # Log validation metrics to Neptune
-        run["validation/accuracy"].log(out_dict["scalar"]["np_acc"])
-        run["validation/dice"].log(out_dict["scalar"]["np_dice"])
-        run["validation/mse"].log(out_dict["scalar"]["hv_mse"])
-
-        print(
-            f"[Epoch {epoch + 1} / {config['TRAIN']['EPOCHS']}] Val || "
-            f"ACC={out_dict['scalar']['np_acc']:.3f} || "
-            f"DICE={out_dict['scalar']['np_dice']:.3f} || "
-            f"MSE={out_dict['scalar']['hv_mse']:.3f}"
-        )
-
-        # Save model periodically and log to Neptune
-        if (epoch + 1) % config["LOGGING"]["SAVE_STEP"] == 0:
-            model_path = os.path.join(
-                config["LOGGING"]["SAVE_PATH"],
-                f"epoch_{epoch + 1}.pth"
-            )
-            torch.save(model.state_dict(), model_path)
-
-    # Save the final model
-    final_model_path = os.path.join(config["LOGGING"]["SAVE_PATH"], "latest.pth")
-    torch.save(model.state_dict(), final_model_path)
-    run["model/latest"].upload(File(final_model_path))
+    result_grid = tuner.fit()
+    print("Best config is:", result_grid.get_best_result().config,
+    ' with accuracy: ', result_grid.get_best_result().metrics['mean_accuracy'])
 
     # Stop Neptune run
     run.stop()
-
-
-if __name__ == "__main__":
-    main()

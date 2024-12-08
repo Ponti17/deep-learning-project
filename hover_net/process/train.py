@@ -35,7 +35,8 @@ def train_step(
 
     def track_value(name, value):
         result_dict["EMA"].update({name: value})
-        run[f"training/{name}"].append(value)
+        if run is not None:
+            run[f"training/{name}"].append(value)
 
     imgs = batch_data["img"]
     true_np = batch_data["np_map"]
