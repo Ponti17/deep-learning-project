@@ -141,7 +141,7 @@ def main(config, yml_config):
         lr_scheduler.step()
         out_dict = proc_valid_step_output(accumulated_output)
 
-        session.report({"Valid dice": 100*out_dict['scalar']['np_dice']})
+        session.report({"valid_dice": 100*out_dict['scalar']['np_dice']})
 
 if __name__ == "__main__":
     # User must parse the config file
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     tuner = tune.Tuner(
         trainable_with_resources,
         tune_config=tune.TuneConfig(
-            metric="mean_accuracy",
+            metric="valid_dice",
             mode="max",
             search_alg=algo,
             num_samples=1,
@@ -230,7 +230,7 @@ if __name__ == "__main__":
 
     result_grid = tuner.fit()
     print("Best config is:", result_grid.get_best_result().config,
-    ' with accuracy: ', result_grid.get_best_result().metrics['mean_accuracy'])
+    ' with accuracy: ', result_grid.get_best_result().metrics['valid_dice'])
 
     # Stop Neptune run
     run.stop()
