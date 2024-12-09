@@ -104,6 +104,7 @@ def main(config, yml_config):
     model.to(yml_config["TRAIN"]["DEVICE"])
 
     for epoch in range(yml_config['TRAIN']['EPOCHS']):
+        print(epoch)
         if epoch == 50:
             model.freeze = False
 
