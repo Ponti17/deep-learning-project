@@ -104,7 +104,7 @@ def main(config, yml_config):
     model.to(yml_config["TRAIN"]["DEVICE"])
 
     for epoch in range(yml_config['TRAIN']['EPOCHS']):
-        if epoch == 50:
+        if epoch == 30:
             model.freeze = False
 
         # Training loop
@@ -214,7 +214,7 @@ if __name__ == "__main__":
             metric="valid_dice",
             mode="max",
             search_alg=algo,
-            num_samples=10,
+            num_samples=30,
             max_concurrent_trials=1
         ),
         run_config=air.RunConfig(
