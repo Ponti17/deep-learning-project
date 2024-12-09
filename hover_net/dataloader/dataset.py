@@ -1,5 +1,7 @@
+# Packages
 from torch.utils.data import DataLoader
 
+# HoVer Net
 from hover_net.datasets.puma_dataset import PumaDataset
 
 def get_dataloader(
@@ -22,6 +24,8 @@ def get_dataloader(
         - batch_size (int): Batch size.
         - run_mode (str): Mode of operation.
     """
+    # We have called this function with bad arguments so many times
+    # Raise error if we do it again!
     if image_path is None:
         raise ValueError("Image path is required.")
     if geojson_path is None:
@@ -42,6 +46,7 @@ def get_dataloader(
         augment=True,
         )
 
+    # Shuffle the dataset if we are in training mode
     shuffle = True if run_mode == "train" else False
     dataloader = DataLoader(
         dataset,
@@ -50,4 +55,5 @@ def get_dataloader(
         num_workers=0,
         pin_memory=True
     )
+
     return dataloader
