@@ -215,7 +215,7 @@ if __name__ == "__main__":
             mode="max",
             search_alg=algo,
             num_samples=10,
-            max_concurrent_trials=2
+            max_concurrent_trials=1
         ),
         run_config=air.RunConfig(
             stop={"training_iteration": 1},
