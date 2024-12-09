@@ -53,11 +53,14 @@ def main(config, yml_config):
         "tp": {"bce": tp_bce, "dice": tp_dice},
     }
 
+    image_dir = os.path.join(get_dir(), yml_config["DATA"]["IMAGE_PATH"])
+    geojson_dir = os.path.join(get_dir(), yml_config["DATA"]["GEOJSON_PATH"])
+
     # Training and Validation Loops
     train_dataloader = get_dataloader(
         dataset_type="puma",
-        image_path=yml_config["DATA"]["IMAGE_PATH"],
-        geojson_path=yml_config["DATA"]["GEOJSON_PATH"],
+        image_path=image_dir,
+        geojson_path=geojson_dir,
         with_type=True,
         input_shape=(
             yml_config["DATA"]["PATCH_SIZE"],
@@ -72,8 +75,8 @@ def main(config, yml_config):
     )
     val_dataloader = get_dataloader(
         dataset_type="puma",
-        image_path=yml_config["DATA"]["IMAGE_PATH"],
-        geojson_path=yml_config["DATA"]["GEOJSON_PATH"],
+        image_path=image_dir,
+        geojson_path=geojson_dir,
         with_type=True,
         input_shape=(
             yml_config["DATA"]["PATCH_SIZE"],
