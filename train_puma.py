@@ -168,6 +168,7 @@ def main():
         run["validation/accuracy"].log(out_dict["scalar"]["np_acc"])
         run["validation/dice"].log(out_dict["scalar"]["np_dice"])
         run["validation/mse"].log(out_dict["scalar"]["hv_mse"])
+        run["validation/tp_dice"].log(out_dict["scalar"]["tp_dice"])
 
         print(
             f"[Epoch {epoch + 1} / {config['TRAIN']['EPOCHS']}] Val || "
