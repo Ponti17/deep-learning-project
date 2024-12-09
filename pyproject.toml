@@ -31,6 +31,7 @@ imgaug          = "^0.4.0"
 pycocotools     = "^2.0.8"
 tidecv          = "^1.0.1"
 ray = {extras = ["data", "serve", "train", "tune"], version = "^2.40.0"}
+optuna = "^4.1.0"
 
 [[tool.poetry.source]]
 name            = "torch-gpu"
