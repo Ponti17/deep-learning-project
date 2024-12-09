@@ -209,7 +209,6 @@ if __name__ == "__main__":
         {
             "cpu": 1,
             "gpu": 1,
-            "num_workers": 2
         }
     )
 
