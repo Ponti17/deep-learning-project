@@ -37,7 +37,6 @@ class PumaDataset(HoVerDatasetBase):
         self,
         image_path,
         geojson_path,
-        with_type=True,
         input_shape=None,
         mask_shape=None,
         run_mode="train",
@@ -97,7 +96,6 @@ class PumaDataset(HoVerDatasetBase):
             'nuclei_epithelium': 2,  # Other
         }
 
-        self.with_type = with_type
         self.mask_shape = mask_shape
         self.input_shape = input_shape
 
@@ -170,10 +168,9 @@ class PumaDataset(HoVerDatasetBase):
         feed_dict = {"img": img}
 
         inst_map = ann[..., 0]  # HW1 -> HW
-        if self.with_type:
-            type_map = (ann[..., 1]).copy()
-            type_map = cropping_center(type_map, self.mask_shape)
-            feed_dict["tp_map"] = type_map
+        type_map = (ann[..., 1]).copy()
+        type_map = cropping_center(type_map, self.mask_shape)
+        feed_dict["tp_map"] = type_map
 
         target_dict = gen_targets(inst_map, self.mask_shape)
         feed_dict.update(target_dict)

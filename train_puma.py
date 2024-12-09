@@ -77,7 +77,6 @@ def main():
     train_dataloader = get_dataloader(
         image_path=config["DATA"]["IMAGE_PATH"],
         geojson_path=config["DATA"]["GEOJSON_PATH"],
-        with_type=True,
         input_shape=(
             config["DATA"]["PATCH_SIZE"],
             config["DATA"]["PATCH_SIZE"]
@@ -92,7 +91,6 @@ def main():
     val_dataloader = get_dataloader(
         image_path=config["DATA"]["IMAGE_PATH"],
         geojson_path=config["DATA"]["GEOJSON_PATH"],
-        with_type=True,
         input_shape=(
             config["DATA"]["PATCH_SIZE"],
             config["DATA"]["PATCH_SIZE"]
