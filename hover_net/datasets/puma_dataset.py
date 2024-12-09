@@ -80,20 +80,6 @@ class PumaDataset(Dataset):
             self.images = self.primary_rois_images[valid_idx_pri:] + self.metastatic_rois_images[valid_idx_met:]
             self.geojsons = self.primary_rois_geojsons[valid_idx_pri:] + self.metastatic_rois_geojsons[valid_idx_met:]
 
-        # Polygon class labels
-        self.classes = {
-            'nuclei_tumor': 0,          # Tumor
-            'nuclei_lymphocyte': 1,     # TIL
-            'nuclei_plasma_cell': 1,    # TIL
-            'nuclei_endothelium': 2,    # Other
-            'nuclei_apoptosis': 2,      # Other
-            'nuclei_stroma': 2,         # Other
-            'nuclei_histiocyte': 2,     # Other
-            'nuclei_melanophage': 2,    # Other
-            'nuclei_neutrophil': 2,     # Other
-            'nuclei_epithelium': 2,     # Other
-        }
-
         self.mask_shape = mask_shape
         self.input_shape = input_shape
 
