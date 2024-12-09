@@ -104,7 +104,6 @@ def main(config, yml_config):
     model.to(yml_config["TRAIN"]["DEVICE"])
 
     for epoch in range(yml_config['TRAIN']['EPOCHS']):
-        print(epoch)
         if epoch == 50:
             model.freeze = False
 
@@ -138,7 +137,7 @@ def main(config, yml_config):
         lr_scheduler.step()
         out_dict = proc_valid_step_output(accumulated_output)
 
-        session.report({"valid_dice": out_dict["scalar"]["np_dice"]})
+    session.report({"valid_dice": out_dict["scalar"]["np_dice"]})
 
 if __name__ == "__main__":
     # User must parse the config file
