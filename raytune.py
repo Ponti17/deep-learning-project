@@ -230,5 +230,8 @@ if __name__ == "__main__":
     print("Best config is:", result_grid.get_best_result().config,
     ' with accuracy: ', result_grid.get_best_result().metrics['valid_dice'])
 
+    df = result_grid.get_dataframe()
+    df.to_csv(os.path.join(yml_config['LOGGGING']['SAVE_PATH'], "results.csv"), index=False)
+
     # Stop Neptune run
     run.stop()
