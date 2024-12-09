@@ -38,14 +38,15 @@ def main(config, yml_config):
 
     lr      = config["lr"]
     weigth_decay = config["weigth_decay"]
-    np_bce     = config["np_bce"]
-    np_dice    = config["np_dice"]
-    hv_mse     = config["hv_mse"]
-    hv_msge    = config["hv_msge"]
-    tp_bce     = config["tp_bce"]
-    tp_dice    = config["tp_dice"]
+    np_bce     = 1
+    np_dice    = 1
+    hv_mse     = 1
+    hv_msge    = 1
+    tp_bce     = 1
+    tp_dice    = 1
     step_size  = config["step_size"]
     gamma      = config["gamma"]
+    freeze     = config["freeze"]
 
     loss_opts = {
         "np": {"bce": np_bce, "dice": np_dice},
@@ -94,7 +95,7 @@ def main(config, yml_config):
         backbone_name=yml_config["MODEL"]["BACKBONE"],
         pretrained_backbone=yml_config["MODEL"]["PRETRAINED"],
         num_types=yml_config["MODEL"]["NUM_TYPES"],
-        freeze=False
+        freeze=freeze
     )
 
     optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr, weight_decay=weigth_decay)
@@ -193,12 +194,7 @@ if __name__ == "__main__":
     search_space = {
         "lr":           tune.uniform(1e-5, 1e-3),
         "weigth_decay": tune.uniform(1e-6, 1e-4),
-        "np_bce":       tune.uniform(0.5, 2),
-        "np_dice":      tune.uniform(0.5, 2),
-        "hv_mse":       tune.uniform(0.5, 2),
-        "hv_msge":      tune.uniform(0.5, 2),
-        "tp_bce":       tune.uniform(0.5, 2),
-        "tp_dice":      tune.uniform(0.5, 2),
+        "freeze":       tune.choice([True, False]),
         "step_size":    tune.randint(5, 25),
         "gamma":        tune.uniform(1e-6, 1e-4),
     }
@@ -218,7 +214,8 @@ if __name__ == "__main__":
             metric="valid_dice",
             mode="max",
             search_alg=algo,
-            num_samples=100,
+            num_samples=10,
+            max_concurrent_trials=2
         ),
         run_config=air.RunConfig(
             stop={"training_iteration": 1},
