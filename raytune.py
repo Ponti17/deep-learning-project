@@ -205,9 +205,13 @@ if __name__ == "__main__":
 
     algo = OptunaSearch()
 
-    trainable_with_resources = tune.with_resources(
-    tune.with_parameters(main, yml_config=yml_config),
-    {"cpu": 1, "gpu":1})
+    trainable_with_resources = tune.with_resources(tune.with_parameters(main, yml_config=yml_config),
+        {
+            "cpu": 1,
+            "gpu": 1,
+            "num_workers": 2
+        }
+    )
 
     tuner = tune.Tuner(
         trainable_with_resources,
@@ -215,7 +219,7 @@ if __name__ == "__main__":
             metric="valid_dice",
             mode="max",
             search_alg=algo,
-            num_samples=1,
+            num_samples=100,
         ),
         run_config=air.RunConfig(
             stop={"training_iteration": 1},
@@ -223,7 +227,7 @@ if __name__ == "__main__":
         param_space=search_space,
     )
 
-    #if I don't limit num_cpus, ray tries to use the whole node and crashes:
+    # If I don't limit num_cpus, ray tries to use the whole node and crashes:
     ray.init(num_cpus=numCPUs, num_gpus=numGPUs, log_to_driver=False)
 
     result_grid = tuner.fit()
