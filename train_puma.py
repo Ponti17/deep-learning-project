@@ -75,7 +75,6 @@ def main():
 
     # Training and Validation Loops
     train_dataloader = get_dataloader(
-        dataset_type="puma",
         image_path=config["DATA"]["IMAGE_PATH"],
         geojson_path=config["DATA"]["GEOJSON_PATH"],
         with_type=True,
@@ -91,7 +90,6 @@ def main():
         run_mode="train",
     )
     val_dataloader = get_dataloader(
-        dataset_type="puma",
         image_path=config["DATA"]["IMAGE_PATH"],
         geojson_path=config["DATA"]["GEOJSON_PATH"],
         with_type=True,

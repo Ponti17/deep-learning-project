@@ -3,7 +3,6 @@ from torch.utils.data import DataLoader
 from hover_net.datasets.puma_dataset import PumaDataset
 
 def get_dataloader(
-    dataset_type = None,
     image_path   = None,
     geojson_path = None,
     with_type    = True,
@@ -15,23 +14,35 @@ def get_dataloader(
     """
     Get dataloader for training, validation, inference.
 
-    When run_mode is "train" or "val", the dataloader is created for training
-    or validation. When run_mode is "inference_folder", the dataloader is
-    created for inference on several image in a folder. When run_mode is 
-    "inference_single", the dataloader is created for inference on a single image.
+    Args:
+        - image_path (str): Path to image directory.
+        - geojson_path (str): Path to geojson directory.
+        - with_type (bool): Whether to include type information.
+        - input_shape (tuple): Shape of input image.
+        - mask_shape (tuple): Shape of mask.
+        - batch_size (int): Batch size.
+        - run_mode (str): Mode of operation.
     """
-    if dataset_type.lower() == "puma":
-        dataset = PumaDataset(
-            image_path=image_path,
-            geojson_path=geojson_path,
-            with_type=with_type,
-            input_shape=input_shape,
-            mask_shape=mask_shape,
-            run_mode=run_mode,
-            augment=True,
+    if image_path is None:
+        raise ValueError("Image path is required.")
+    if geojson_path is None:
+        raise ValueError("Geojson path is required.")
+    if input_shape is None:
+        raise ValueError("Input shape is required.")
+    if mask_shape is None:
+        raise ValueError("Mask shape is required.")
+    if run_mode not in ["train", "valid", "test"]:
+        raise ValueError("Invalid run_mode. Must be one of 'train', 'valid', 'test'.")
+
+    dataset = PumaDataset(
+        image_path=image_path,
+        geojson_path=geojson_path,
+        with_type=with_type,
+        input_shape=input_shape,
+        mask_shape=mask_shape,
+        run_mode=run_mode,
+        augment=True,
         )
-    else:
-        raise NotImplementedError
 
     shuffle = True if run_mode == "train" else False
     dataloader = DataLoader(
