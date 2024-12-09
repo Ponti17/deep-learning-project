@@ -1,19 +1,19 @@
+# Core
 import os
-
-# GeoJSON
 import json
-from shapely.geometry import shape
-from shapely.geometry.polygon import Polygon
-from PIL import Image, ImageDraw
 
+# Packages
 import numpy as np
 import albumentations as A
+from PIL import Image, ImageDraw
+from shapely.geometry import shape
+from torch.utils.data import Dataset
 
+# HoVer Net
 from hover_net.dataloader.preprocessing import gen_targets
-from .hover_dataset import HoVerDatasetBase
 
 
-class PumaDataset(HoVerDatasetBase):
+class PumaDataset(Dataset):
     """
     Data loader for the PUMA dataset.
 
@@ -22,7 +22,7 @@ class PumaDataset(HoVerDatasetBase):
     After augmentation, horizontal and vertical maps are generated.
 
     The images and corresponding GeoJSON files are found by os.listdir().
-    It is there VERY important that their naming schemes are the same so they
+    It is therefore VERY important that their naming schemes are the same so they
     are in the correct order.
 
     Args:
@@ -30,7 +30,8 @@ class PumaDataset(HoVerDatasetBase):
         geojson_path: path to the geojson directory
         input_shape: shape of the input [h,w] - defined in config.py
         mask_shape: shape of the output [h,w] - defined in config.py
-        mode: 'train', 'valid'
+        mode: 'train', 'valid' or 'test'
+        augment: whether to augment the data or not
     """
 
     def __init__(
@@ -46,7 +47,7 @@ class PumaDataset(HoVerDatasetBase):
             raise ValueError("Invalid mode. Must be 'train', 'valid' or 'test'.")
         if input_shape is None or mask_shape is None:
             raise ValueError("input_shape and mask_shape must be defined.")
-        
+
         self.augment = augment
 
         self.run_mode    = run_mode
@@ -81,16 +82,16 @@ class PumaDataset(HoVerDatasetBase):
 
         # Polygon class labels
         self.classes = {
-            'nuclei_tumor': 0,  # Tumor
-            'nuclei_lymphocyte': 1,  # TIL
-            'nuclei_plasma_cell': 1,  # TIL
-            'nuclei_endothelium': 2,  # Other
-            'nuclei_apoptosis': 2,  # Other
-            'nuclei_stroma': 2,  # Other
-            'nuclei_histiocyte': 2,  # Other
-            'nuclei_melanophage': 2,  # Other
-            'nuclei_neutrophil': 2,  # Other
-            'nuclei_epithelium': 2,  # Other
+            'nuclei_tumor': 0,          # Tumor
+            'nuclei_lymphocyte': 1,     # TIL
+            'nuclei_plasma_cell': 1,    # TIL
+            'nuclei_endothelium': 2,    # Other
+            'nuclei_apoptosis': 2,      # Other
+            'nuclei_stroma': 2,         # Other
+            'nuclei_histiocyte': 2,     # Other
+            'nuclei_melanophage': 2,    # Other
+            'nuclei_neutrophil': 2,     # Other
+            'nuclei_epithelium': 2,     # Other
         }
 
         self.mask_shape = mask_shape
@@ -167,7 +168,7 @@ class PumaDataset(HoVerDatasetBase):
         type_map = (ann[..., 1]).copy()
         feed_dict["tp_map"] = type_map
 
-        target_dict = gen_targets(inst_map, self.mask_shape)
+        target_dict = gen_targets(inst_map)
         feed_dict.update(target_dict)
 
         return feed_dict
