@@ -61,7 +61,6 @@ def main(config, yml_config):
     train_dataloader = get_dataloader
         image_path=image_dir,
         geojson_path=geojson_dir,
-        with_type=True,
         input_shape=(
             yml_config["DATA"]["PATCH_SIZE"],
             yml_config["DATA"]["PATCH_SIZE"]
@@ -76,7 +75,6 @@ def main(config, yml_config):
     val_dataloader = get_dataloader(
         image_path=image_dir,
         geojson_path=geojson_dir,
-        with_type=True,
         input_shape=(
             yml_config["DATA"]["PATCH_SIZE"],
             yml_config["DATA"]["PATCH_SIZE"]

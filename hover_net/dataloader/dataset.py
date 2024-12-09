@@ -5,7 +5,6 @@ from hover_net.datasets.puma_dataset import PumaDataset
 def get_dataloader(
     image_path   = None,
     geojson_path = None,
-    with_type    = True,
     input_shape  = None,
     mask_shape   = None,
     batch_size   = 1,
@@ -37,7 +36,6 @@ def get_dataloader(
     dataset = PumaDataset(
         image_path=image_path,
         geojson_path=geojson_path,
-        with_type=with_type,
         input_shape=input_shape,
         mask_shape=mask_shape,
         run_mode=run_mode,
