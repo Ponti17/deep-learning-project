@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 
 # ML
@@ -151,6 +152,9 @@ if __name__ == "__main__":
         help="Neptune project name (optional, defaults to env NEPTUNE_PROJECT)"
     )
     args = parser.parse_args()
+
+    this_path = get_dir()
+    sys.path.append(this_path)
 
     yml_config = read_yaml(args.config)
 
