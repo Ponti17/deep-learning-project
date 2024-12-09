@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw
 import numpy as np
 import albumentations as A
 
-from hover_net.dataloader.preprocessing import cropping_center, gen_targets
+from hover_net.dataloader.preprocessing import gen_targets
 from .hover_dataset import HoVerDatasetBase
 
 
@@ -67,9 +67,6 @@ class PumaDataset(HoVerDatasetBase):
         train_idx_met = int(0.7 * num_met)          # Splitting index for train metastatic ROIs
         valid_idx_pri = int(0.85 * num_pri)          # Splitting index for validation primary ROIs
         valid_idx_met = int(0.85 * num_met)          # Splitting index for validation metastatic ROIs
-
-        print(f"Number of primary ROIs: {num_pri}")
-        print(f"Number of metastatic ROIs: {num_met}")
 
         # 70% train, 15% val, 15% test
         if run_mode == "train":
@@ -164,12 +161,10 @@ class PumaDataset(HoVerDatasetBase):
             img = augmented["image"]
             ann = augmented["mask"]
 
-        img = cropping_center(img, self.input_shape)
         feed_dict = {"img": img}
 
         inst_map = ann[..., 0]  # HW1 -> HW
         type_map = (ann[..., 1]).copy()
-        type_map = cropping_center(type_map, self.mask_shape)
         feed_dict["tp_map"] = type_map
 
         target_dict = gen_targets(inst_map, self.mask_shape)
