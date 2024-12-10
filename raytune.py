@@ -36,17 +36,17 @@ def main(config, yml_config):
     """
     run = None
 
-    lr      = config["lr"]
-    weigth_decay = config["weigth_decay"]
-    np_bce     = 1
-    np_dice    = 1
-    hv_mse     = 1
-    hv_msge    = 1
-    tp_bce     = 1
-    tp_dice    = 1
-    step_size  = config["step_size"]
-    gamma      = config["gamma"]
-    freeze     = config["freeze"]
+    lr          = 0.000275
+    weigth_decay = 3.1e-5
+    np_bce     = config["np_bce"]
+    np_dice    = config["np_dice"]
+    hv_mse     = config["hv_mse"]
+    hv_msge    = config["hv_msge"]
+    tp_bce     = config["tp_bce"]
+    tp_dice    = config["tp_dice"]
+    step_size  = 16
+    gamma      = 4.7e-5
+    freeze     = False
 
     loss_opts = {
         "np": {"bce": np_bce, "dice": np_dice},
@@ -104,9 +104,6 @@ def main(config, yml_config):
     model.to(yml_config["TRAIN"]["DEVICE"])
 
     for epoch in range(yml_config['TRAIN']['EPOCHS']):
-        if epoch == 30:
-            model.freeze = False
-
         # Training loop
         accumulated_output = {}
         for step_idx, data in enumerate(train_dataloader):
@@ -135,9 +132,13 @@ def main(config, yml_config):
             update_accumulated_output(accumulated_output, valid_result_dict)
 
         lr_scheduler.step()
-        out_dict = proc_valid_step_output(accumulated_output)
+        out_dict = proc_valid_step_output(accumulated_output, nr_types=config["MODEL"]["NUM_TYPES"])
 
-    session.report({"valid_dice": out_dict["scalar"]["np_dice"]})
+    session.report({
+        "tp_dice_1": out_dict["scalar"]["tp_dice_1"],
+        "tp_dice_2": out_dict["scalar"]["tp_dice_2"],
+        "tp_dice_3": out_dict["scalar"]["tp_dice_3"],
+        })
 
 if __name__ == "__main__":
     # User must parse the config file
@@ -192,11 +193,12 @@ if __name__ == "__main__":
     run["numDevices"] = numDevices
 
     search_space = {
-        "lr":           tune.uniform(1e-5, 1e-3),
-        "weigth_decay": tune.uniform(1e-6, 1e-4),
-        "freeze":       tune.choice([True, False]),
-        "step_size":    tune.randint(5, 25),
-        "gamma":        tune.uniform(1e-6, 1e-4),
+        "np_bce":   tune.uniform(0.5, 2),
+        "np_dice":  tune.uniform(0.5, 2),
+        "hv_mse":   tune.uniform(0.5, 2),
+        "hv_msge":  tune.uniform(0.5, 2),
+        "tp_bce":   tune.uniform(0.5, 2),
+        "tp_dice":  tune.uniform(0.5, 2),
     }
 
     algo = OptunaSearch()
