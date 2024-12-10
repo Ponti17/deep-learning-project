@@ -1,31 +1,21 @@
-import warnings
-
+# Packages
 import cv2
 import numpy as np
 from scipy.ndimage import binary_fill_holes, measurements
 from skimage.segmentation import watershed
 
-from hover_net.dataloader.preprocessing import (get_bounding_box,
-                                                remove_small_objects)
+# HoVer Net
+from hover_net.dataloader.preprocessing import get_bounding_box
 
-
-def noop(*args, **kargs):
-    pass
-
-
-warnings.warn = noop
-
-
-####
 def __proc_np_hv(pred):
-    """Process Nuclei Prediction with XY Coordinate Map.
+    """
+    Process Nuclei Prediction with XY Coordinate Map.
 
     Args:
         pred: prediction output, assuming
               channel 0 contain probability map of nuclei
               channel 1 containing the regressed X-map
               channel 2 containing the regressed Y-map
-
     """
     pred = np.array(pred, dtype=np.float32)
 
