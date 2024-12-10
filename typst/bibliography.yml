@@ -1,0 +1,65 @@
+nih:
+  type: article
+  organization: National Cancer Institute
+  url:
+    value: "https://seer.cancer.gov/statfacts/html/melan.html"
+    date: 2024-12-01
+  title: Melanoma of the Skin - Cancer Stat Facts
+
+puma:
+  type: web
+  organization: Department of Medical Oncology, University Medical Center Utrecht
+  url:
+    value: "https://puma.grand-challenge.org/puma/"
+    date: 2024-12-01
+  title: "PUMA: Panoptic segmentation of nUclei and tissue in MelanomA - Grand Challenge"
+
+MIDL:
+    type: article
+    title: A Novel Dataset for Nuclei Segmentation in Melanoma Histopathology
+    author:
+        - Mark Schuiveling
+        - Willeke A.M. Blokx
+        - Gerben E. Breimer
+        - Karijn P.M. Suijkerbuijk
+        - Daniel Eek
+        - Mitko Veta
+    date: 2024
+    serial-number:
+        doi: "10.1101/2024.10.07.24315039"
+
+TIL:
+     type: article
+     title: Baseline tumor-infiltrating lymphocyte patterns and response to immune checkpoint inhibition in metastatic cutaneous melanoma
+     date: 2024-09-01
+     serial-number:
+        doi: "10.1016/j.ejca.2024.114190"
+     author:
+        - van Duin, Isabella A.J.
+        - Schuiveling, Mark
+        - ter Maat, Laurens S.
+        - van Amsterdam, Wouter A.C.
+        - van den Berkmortel, Franchette
+
+hover:
+    type: article
+    title: Simultaneous Segmentation and Classification of Nuclei in Multi-Tissue Histology Images
+    author:
+        - Simon Graham
+        - Quoc Dang Vu
+        - Shan E. Ahmed Raza
+        - Ayesha Azam
+        - Yee Wah Tsang
+        - Jin Tae Kwak
+        - Nasir Rajpoot
+    date: 2019
+    serial-number:
+        arxiv: 1812.06499
+
+image-padding-medium:
+    type: article
+    url:
+      value: "https://medium.com/@Orca_Thunder/image-padding-techniques-reflect-padding-part-2-5a013cd96537"
+      date: 2024-12-01
+    title: "Image Padding Techniques: Reflect Padding"
+    author: "Vemulapati, Prudhvi"
