@@ -159,7 +159,7 @@ def main():
             update_accumulated_output(accumulated_output, valid_result_dict)
 
         lr_scheduler.step()
-        out_dict = proc_valid_step_output(accumulated_output)
+        out_dict = proc_valid_step_output(accumulated_output, nr_types=config["MODEL"]["NUM_TYPES"])
 
         # Log validation metrics to Neptune
         run["validation/accuracy"].log(out_dict["scalar"]["np_acc"])
