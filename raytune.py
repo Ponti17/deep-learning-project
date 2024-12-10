@@ -134,11 +134,9 @@ def main(config, yml_config):
         lr_scheduler.step()
         out_dict = proc_valid_step_output(accumulated_output, nr_types=config["MODEL"]["NUM_TYPES"])
 
-    session.report({
-        "tp_dice_1": out_dict["scalar"]["tp_dice_1"],
-        "tp_dice_2": out_dict["scalar"]["tp_dice_2"],
-        "tp_dice_3": out_dict["scalar"]["tp_dice_3"],
-        })
+        tp_dice = out_dict["scalar"]["tp_dice_1"] + out_dict["scalar"]["tp_dice_2"] + out_dict["scalar"]["tp_dice_3"]
+
+    session.report({"tp_dice": tp_dice})
 
 if __name__ == "__main__":
     # User must parse the config file
@@ -213,7 +211,7 @@ if __name__ == "__main__":
     tuner = tune.Tuner(
         trainable_with_resources,
         tune_config=tune.TuneConfig(
-            metric="valid_dice",
+            metric="tp_dice",
             mode="max",
             search_alg=algo,
             num_samples=30,
@@ -230,7 +228,7 @@ if __name__ == "__main__":
 
     result_grid = tuner.fit()
     print("Best config is:", result_grid.get_best_result().config,
-    ' with accuracy: ', result_grid.get_best_result().metrics['valid_dice'])
+    ' with accuracy: ', result_grid.get_best_result().metrics['tp_dice'])
 
     df = result_grid.get_dataframe()
     df.to_csv(os.path.join(yml_config['LOGGING']['SAVE_PATH'], "results.csv"), index=False)
