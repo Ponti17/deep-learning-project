@@ -132,7 +132,7 @@ def main(config, yml_config):
             update_accumulated_output(accumulated_output, valid_result_dict)
 
         lr_scheduler.step()
-        out_dict = proc_valid_step_output(accumulated_output, nr_types=config["MODEL"]["NUM_TYPES"])
+        out_dict = proc_valid_step_output(accumulated_output, nr_types=yml_config["MODEL"]["NUM_TYPES"])
 
         tp_dice = out_dict["scalar"]["tp_dice_1"] + out_dict["scalar"]["tp_dice_2"] + out_dict["scalar"]["tp_dice_3"]
 
