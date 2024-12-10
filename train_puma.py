@@ -152,8 +152,6 @@ def main():
             valid_result_dict = valid_step(
                 batch_data=data,
                 model=model,
-                loss_opts=loss_opts,
-                run=run,
                 device=config["TRAIN"]["DEVICE"]
             )
             update_accumulated_output(accumulated_output, valid_result_dict)
