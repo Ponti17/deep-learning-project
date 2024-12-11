@@ -1,0 +1,89 @@
+nih:
+  type: article
+  organization: National Cancer Institute
+  url:
+    value: "https://seer.cancer.gov/statfacts/html/melan.html"
+    date: 2024-12-01
+  title: Melanoma of the Skin - Cancer Stat Facts
+
+puma:
+  type: web
+  organization: Department of Medical Oncology, University Medical Center Utrecht
+  url:
+    value: "https://puma.grand-challenge.org/puma/"
+    date: 2024-12-01
+  title: "PUMA: Panoptic segmentation of nUclei and tissue in MelanomA - Grand Challenge"
+
+novel:
+    type: article
+    title: A Novel Dataset for Nuclei Segmentation in Melanoma Histopathology
+    author:
+        - Mark Schuiveling
+        - Willeke A.M. Blokx
+        - Gerben E. Breimer
+        - Karijn P.M. Suijkerbuijk
+        - Daniel Eek
+        - Mitko Veta
+    date: 2024
+    serial-number:
+        doi: "10.1101/2024.10.07.24315039"
+
+TIL:
+     type: article
+     title: Baseline tumor-infiltrating lymphocyte patterns and response to immune checkpoint inhibition in metastatic cutaneous melanoma
+     date: 2024-09-01
+     serial-number:
+        doi: "10.1016/j.ejca.2024.114190"
+     author:
+        - van Duin, Isabella A.J.
+        - Schuiveling, Mark
+        - ter Maat, Laurens S.
+        - van Amsterdam, Wouter A.C.
+        - van den Berkmortel, Franchette
+
+hover:
+    type: article
+    title: Simultaneous Segmentation and Classification of Nuclei in Multi-Tissue Histology Images
+    author:
+        - Simon Graham
+        - Quoc Dang Vu
+        - Shan E. Ahmed Raza
+        - Ayesha Azam
+        - Yee Wah Tsang
+        - Jin Tae Kwak
+        - Nasir Rajpoot
+    date: 2019
+    serial-number:
+        arxiv: 1812.06499
+
+resnet:
+  type: article
+  title: Deep Residual Learning for Image Recognition
+  author:
+    - Kaiming He
+    - Xiangyu Zhang
+    - Shaoqing Ren
+  data: 2015
+  serial-number:
+    arxiv: 1512.03385
+
+resnext:
+  type: article
+  title: Aggregated Residual Transformations for Deep Neural Networks
+  author:
+    - Saining Xie
+    - Ross Girshick
+    - Piotr Dollar
+    - Zhuowen Tu
+    - Kaiming He
+  data: 2017
+  serial-number:
+    arxiv: 1611.05431
+    
+pannuke:
+  type: web
+  url:
+    value: "https://paperswithcode.com/paper/pannuke-dataset-extension-insights-and"
+    date: 2024-12-10
+  title: "Papers with Code - PanNuke Dataset Extension, Insights and Baselines"
+

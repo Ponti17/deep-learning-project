@@ -1,0 +1,47 @@
+\documentclass[10pt]{beamer} % For defining the document type
+\usetheme{Madrid}
+
+\input{settings/functions.tex} % Import some custom settings
+
+\usepackage{graphicx} % For including graphics
+\graphicspath{{./imgs/}} % Sets the default location of pictures
+
+\usepackage{caption}
+
+\usepackage{siunitx}
+
+\usepackage{amsmath}  % For making math
+
+\usepackage{subcaption} % for subfigures
+
+\usepackage{float} % for [H]
+
+\usepackage{enumerate}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{threeparttable}
+\usepackage{makecell}
+
+\usepackage{subfiles}
+
+\title{Nuclei Detection in Melanoma}
+\subtitle{Panoptic segmentation of nUclei and tissue in advanced MelanomA}
+\author{Andreas S. Pedersen,\\
+    Lukas Hedegaard \\
+    \small{Group: 23}}
+\institute[AU ECE]{
+    Department of ECE\\
+    Aarhus University
+}
+\date{November 10, 2024}
+\logo{\includegraphics[height=0.5cm]{au_logo.png}}
+
+\newcommand{\thickhline}{\Xhline{1pt}}
+
+\AtBeginSection
+{
+\begin{frame}{Table of Contents}
+\tableofcontents[currentsection,hideothersubsections]
+\end{frame}
+}

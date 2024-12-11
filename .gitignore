@@ -1,0 +1,32 @@
+# Blacklist all files in data
+**/data/*
+
+# Whitelist .keep to keep the directory when cloning
+!**/data/.keep
+
+# Blacklist all pretrained in data
+**/pretrained/*
+
+# Whitelist .keep to keep the directory when cloning
+!**/pretrained/.keep
+
+# LaTeX
+**/out/
+**/build/
+*.aux
+*.fls
+*.log
+*.pdf
+*.synctex.gz
+*.toc
+*.fdb_latexmk
+*.out
+*.snm
+*.nav
+
+# Python
+__pycache__
+
+neptune_api.key
+
+.neptune/
