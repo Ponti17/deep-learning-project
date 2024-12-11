@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+import math
 
 
 def xentropy_loss(true, pred, reduction="mean"):
@@ -33,6 +34,8 @@ def dice_loss(true, pred, smooth=1e-3):
     true_sum = torch.sum(true, (0, 1, 2))
     loss = 1.0 - (2.0 * inse + smooth) / (pred_sum + true_sum + smooth)
     loss = torch.sum(loss)
+    loss = math.cosh(loss)
+    loss = math.log(loss)
     return loss
 
 
