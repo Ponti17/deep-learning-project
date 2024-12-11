@@ -7,9 +7,6 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# HoVer Net
-from hover_net.dataloader.preprocessing import cropping_center
-
 def proc_valid_step_output(raw_data, nr_types=None):
     """
     Calculate dice coefficient and accuracy for validation step.

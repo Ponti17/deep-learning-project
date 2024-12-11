@@ -8,20 +8,19 @@ import torch.optim as optim
 # Custom modules
 from hover_net.dataloader.dataset import get_dataloader
 from hover_net.models import HoVerNetExt
-from hover_net.process import proc_valid_step_output, train_step, valid_step 
+from hover_net.process.utils import proc_valid_step_output
+from hover_net.process.train import train_step
+from hover_net.process.validate import valid_step
 from hover_net.tools.utils import (dump_yaml, read_yaml, update_accumulated_output)
 
 import neptune
 from neptune.types import File
-
 
 def get_dir():
     """
     Returns the directory of main
     """
     return os.path.dirname(os.path.realpath(__file__))
-
-
 
 def main():
     """
