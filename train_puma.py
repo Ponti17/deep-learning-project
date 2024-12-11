@@ -68,9 +68,9 @@ def main():
     run["config"] = config
 
     loss_opts = {
-        "np": {"bce": 0.56, "dice": 1.29},
-        "hv": {"mse": 1.5, "msge": 1.9},
-        "tp": {"bce": 1.46, "dice": 1.52},
+        "np": {"bce": 1, "dice": 1},
+        "hv": {"mse": 1, "msge": 2},
+        "tp": {"bce": 1, "dice": 1},
     }
 
     # Training and Validation Loops
