@@ -137,8 +137,6 @@ def main():
                 optimizer=optimizer,
                 loss_opts=loss_opts,
                 device=config["TRAIN"]["DEVICE"],
-                show_step=1,
-                verbose=config["LOGGING"]["VERBOSE"],
                 run=run  # Pass Neptune run
             )
 

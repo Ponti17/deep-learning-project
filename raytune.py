@@ -111,8 +111,6 @@ def main(config, yml_config):
                 optimizer=optimizer,
                 loss_opts=loss_opts,
                 device=yml_config["TRAIN"]["DEVICE"],
-                show_step=1,
-                verbose=yml_config["LOGGING"]["VERBOSE"],
                 run=run  # Pass Neptune run
             )
 
