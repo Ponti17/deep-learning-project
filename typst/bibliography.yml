@@ -14,7 +14,7 @@ puma:
     date: 2024-12-01
   title: "PUMA: Panoptic segmentation of nUclei and tissue in MelanomA - Grand Challenge"
 
-MIDL:
+novel:
     type: article
     title: A Novel Dataset for Nuclei Segmentation in Melanoma Histopathology
     author:
@@ -56,10 +56,34 @@ hover:
     serial-number:
         arxiv: 1812.06499
 
-image-padding-medium:
-    type: article
-    url:
-      value: "https://medium.com/@Orca_Thunder/image-padding-techniques-reflect-padding-part-2-5a013cd96537"
-      date: 2024-12-01
-    title: "Image Padding Techniques: Reflect Padding"
-    author: "Vemulapati, Prudhvi"
+resnet:
+  type: article
+  title: Deep Residual Learning for Image Recognition
+  author:
+    - Kaiming He
+    - Xiangyu Zhang
+    - Shaoqing Ren
+  data: 2015
+  serial-number:
+    arxiv: 1512.03385
+
+resnext:
+  type: article
+  title: Aggregated Residual Transformations for Deep Neural Networks
+  author:
+    - Saining Xie
+    - Ross Girshick
+    - Piotr Dollar
+    - Zhuowen Tu
+    - Kaiming He
+  data: 2017
+  serial-number:
+    arxiv: 1611.05431
+    
+pannuke:
+  type: web
+  url:
+    value: "https://paperswithcode.com/paper/pannuke-dataset-extension-insights-and"
+    date: 2024-12-10
+  title: "Papers with Code - PanNuke Dataset Extension, Insights and Baselines"
+
