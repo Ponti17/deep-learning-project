@@ -114,7 +114,7 @@ Thus the NP and HoVer branches perform nuclear segmentation, where the NP branch
 
 It is important to note that the architecture of all three decoder branches are identical. They consist of several up-sampling layers followed by densely connected units.
 
-The HoVer-Net is an attractive architecture for this type of problem. The HoVer branch effectively solves the problem of separating clustered nuclei. By using horizontal and vertical gradient maps (HoVer maps) (#ref(<data_conversion>)), the transition from one nuclei to another will result in a high derivative, making them easily separable. During inference the NP and HoVer maps will used in conjunction to predict the moment (center), contours and bounding boxes of the nuclei. With the NC branch intended to solve the challenge of nuclear classification we are left with the challenge of _class imbalance_. We speculate that the impact of class imbalance can be lessened by careful choice and weighting of loss functions.
+The HoVer-Net is an attractive architecture for this type of problem. The HoVer branch effectively solves the problem of separating clustered nuclei. By using horizontal and vertical gradient maps (HoVer maps) (#ref(<data_conversion>)), the transition from one nuclei to another will result in a high derivative, making them easily separable. During inference the NP and HoVer maps will be used in conjunction to predict the moment (center), contours and bounding boxes of the nuclei. With the NC branch intended to solve the challenge of nuclear classification we are left with the challenge of _class imbalance_. We speculate that the impact of class imbalance can be lessened by careful choice and weighting of loss functions.
 
 #figure(
   image("images/hovernet.png", width: 95%),
@@ -184,23 +184,23 @@ To extend the training set we used extensive data augmentation. Each image durin
 == Hyperparameters
 Several hyperparameters had significant impact on model performance and were of interest to optimize. We created a standalone train loop and used ``` RayTune``` in conjunction with LUMIs computational power to find the best configuration. All runs were using the Adam optimizer with optional StepLR scheduling. Other than the usual hyperparameters, we were also particularly keen to test following:
 
-- *Freezing the ResNet*: If we freeze the ResNet during the first $x$ epochs, we force the network the train the decoders. Later we unfreeze the ResNet and fine-tune everything with a lowered learning rate.
+- *Freezing the ResNet*: If we freeze the ResNet during the first $x$ epochs, we force the network to train the decoders. Later we unfreeze the ResNet and fine-tune everything with a lowered learning rate.
 
 - *Pre-trained ResNet*: In the original HoVer-Net paper they used a pre-trained Preact ResNet-50. We wanted to experiment with the PyTorch ResNet-50 model as well as with a ResNeXt model proposed in #cite(<resnext>).
 
 == Evaluation
 During training we monitored closely the loss functions of all decoder branches and used the sum as an overall score of how well the model performs at the training set. For validation we calculate the Dice coefficient, given by
 
-$ mono(D i c e) = (2mono(T P))/(2mono(T P) + mono(F P) + mono(F N)) $
+$ "NP Dice" = (2|P sect T|)/(|P| + |T|) $
 
 To evaluate the classification performance, we also calculate a per-class Dice coefficient given by the intersection of pixels predicted as some class $P_C$ and the ground truth of pixels as that class $T_C$ over the sum.
 
-$ mono(P e r) mono(C l a s s) mono(D i c e) = (2|P_C sect T_C|)/(|P_C| + |T_C|) $
+$ "Per Class Dice" = (2|P_C sect T_C|)/(|P_C| + |T_C|) $
 
 == Results
 Unfortunately neither freezing the ResNet nor using ResNeXt resulted in any noticable performance difference. The network performance did however improve from hyperparameter optimization.
 
-In particular the optimization of the loss function weights $lambda_a, ..., lambda_f$ improved the per-class dice loss. After 50 epochs all validation metrics have converged, after which the weights were extracted and saved. Type predictions of an image from the test set is shown in #ref(<predictions>). On the test set the model boasts a dice score of $0.886$ and a pixelwise accuracy of $0.943$.
+In particular the optimization of the loss function weights $lambda_a, ..., lambda_f$ improved the per-class dice loss. After 50 epochs all validation metrics have converged, after which the weights were extracted and saved. Type predictions of an image from the test set is shown in #ref(<predictions>). On the test set the model boasts a NP dice score of $0.886$ and a pixelwise accuracy of $0.943$.
 
 #figure(
   image("images/prediction.svg", width: 90%),
