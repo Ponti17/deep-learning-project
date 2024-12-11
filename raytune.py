@@ -117,8 +117,6 @@ def main(config, yml_config):
         # Validation loop
         for step_idx, data in enumerate(val_dataloader):
             valid_result_dict = valid_step(
-                epoch,
-                step_idx,
                 batch_data=data,
                 model=model,
                 device=yml_config["TRAIN"]["DEVICE"]

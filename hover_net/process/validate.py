@@ -1,36 +1,33 @@
+# Core
 from collections import OrderedDict
 
+# Packages
 import torch
 import torch.nn.functional as F
 
+def valid_step(batch_data, model, device="cuda"):
+    """
+    Validation step.
+    """
+    model.eval()
 
-def valid_step(epoch, step, batch_data, model, device="cuda"):
-    model.eval()  # infer mode
-
-    ####
     imgs = batch_data["img"]
     true_np = batch_data["np_map"]
     true_hv = batch_data["hv_map"]
 
-    imgs_gpu = imgs.to(device).type(torch.float32)  # to NCHW
+    imgs_gpu = imgs.to(device).type(torch.float32)
     imgs_gpu = imgs_gpu.permute(0, 3, 1, 2).contiguous()
-
-    # HWC
-    # true_np = torch.squeeze(true_np).to(device).type(torch.int64)
-    # true_hv = torch.squeeze(true_hv).to(device).type(torch.float32)
 
     true_dict = {
         "np": true_np,
         "hv": true_hv,
     }
+    true_tp = batch_data["tp_map"]
+    true_tp = torch.squeeze(true_tp).to(device).type(torch.int64)
+    true_dict["tp"] = true_tp
 
-    if model.num_types is not None:
-        true_tp = batch_data["tp_map"]
-        true_tp = torch.squeeze(true_tp).to(device).type(torch.int64)
-        true_dict["tp"] = true_tp
-
-    # --------------------------------------------------------------
-    with torch.no_grad():  # dont compute gradient
+    # Dont compute gradients!
+    with torch.no_grad():
         pred_dict = model(imgs_gpu)
         pred_list = []
         for k, v in pred_dict.items():
@@ -43,9 +40,7 @@ def valid_step(epoch, step, batch_data, model, device="cuda"):
             type_map = type_map.type(torch.float32)
             pred_dict["tp"] = type_map
 
-    # * Its up to user to define the protocol to
-    # process the raw output per step!
-    result_dict = {  # protocol for contents exchange within `raw`
+    result_dict = {
         "raw": {
             "imgs": imgs.numpy(),
             "true_np": true_dict["np"].cpu().numpy(),
@@ -54,8 +49,7 @@ def valid_step(epoch, step, batch_data, model, device="cuda"):
             "pred_hv": pred_dict["hv"].cpu().numpy(),
         }
     }
-    if model.num_types is not None:
-        result_dict["raw"]["true_tp"] = true_dict["tp"].cpu().numpy()
-        result_dict["raw"]["pred_tp"] = pred_dict["tp"].cpu().numpy()
+    result_dict["raw"]["true_tp"] = true_dict["tp"].cpu().numpy()
+    result_dict["raw"]["pred_tp"] = pred_dict["tp"].cpu().numpy()
 
     return result_dict
