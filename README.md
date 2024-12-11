@@ -76,3 +76,11 @@ To start training, run:
 ## Inference
 
 Unfortunately we did not have time to implement a nice and shiny inference script. Look in our messy notebooks to see how this works.
+
+## Compiling Report
+
+The report can be compiled with
+
+```bash
+typst compile typst/main.typ
+```
