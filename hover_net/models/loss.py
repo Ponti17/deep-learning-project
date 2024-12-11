@@ -12,7 +12,7 @@ def xentropy_loss(true, pred, reduction="mean"):
     Returns:
         cross entropy loss
     """
-    epsilon = 10e-8'
+    epsilon = 10e-8
 
     # scale preds so that the class probs of each sample sum to 1
     pred = pred / torch.sum(pred, -1, keepdim=True)
