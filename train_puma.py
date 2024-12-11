@@ -68,9 +68,9 @@ def main():
     run["config"] = config
 
     loss_opts = {
-        "np": {"bce": 1, "dice": 1},
-        "hv": {"mse": 1, "msge": 2},
-        "tp": {"bce": 1, "dice": 1},
+        "np": {"bce": 0.56, "dice": 1.29},
+        "hv": {"mse": 1.5, "msge": 1.9},
+        "tp": {"bce": 1.46, "dice": 1.52},
     }
 
     # Training and Validation Loops
@@ -114,8 +114,8 @@ def main():
         freeze=False
     )
 
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.000275, weight_decay=3.1e-5)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=16, gamma=4.7e-5)
+    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.0001, weight_decay=1e-5)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.00002)
 
     model.to(config["TRAIN"]["DEVICE"])
 
@@ -130,7 +130,6 @@ def main():
 
     for epoch in range(config['TRAIN']['EPOCHS']):
         run["training/epoch"].log(epoch + 1)
-
         # Training loop
         accumulated_output = {}
         for step_idx, data in enumerate(train_dataloader):
