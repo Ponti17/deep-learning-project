@@ -1,15 +1,15 @@
+# Packages
 import torch
 import torch.nn as nn
 
+# HoVer Net
 from .base import Net
 
-
 class DenseBlock(Net):
-    """Dense Block as defined in:
+    """
+    Dense Block as defined in:
+    "Densely connected convolutional networks."
     Huang, Gao, Zhuang Liu, Laurens Van Der Maaten, and Kilian Q. Weinberger.
-    "Densely connected convolutional networks." In Proceedings of the IEEE
-    conference on computer vision and pattern recognition, pp. 4700-4708. 2017.
-    Only performs `valid` convolution.
     """
 
     def __init__(self, in_ch, unit_ksize, unit_ch, unit_count, split=1):
@@ -20,8 +20,6 @@ class DenseBlock(Net):
         self.in_ch = in_ch
         self.unit_ch = unit_ch
 
-        # ! For inference only so init values for batchnorm
-        # may not match tensorflow
         unit_in_ch = in_ch
         pad_vals = [v // 2 for v in unit_ksize]
         self.units = nn.ModuleList()

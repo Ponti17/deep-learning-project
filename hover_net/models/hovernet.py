@@ -1,17 +1,19 @@
+# Core
 from collections import OrderedDict
 
+# Packages
 import torch.nn as nn
 from torch.nn import Upsample
 
+# HoVer Net
 from .dense import DenseBlock
 from .resnet import ResNetExt
 from .resnext import ResNextExt
 
-# from .upsample import UpSample2x
-
-
 class HoVerNetExt(nn.Module):
-    """Initialise HoVer-Net."""
+    """
+    Initialise HoVer-Net.
+    """
 
     def __init__(
         self,
@@ -89,7 +91,6 @@ class HoVerNetExt(nn.Module):
                 )
             )
 
-        # self.upsample2x = UpSample2x()
         self.upsample2x = Upsample(scale_factor=2)
 
     def get_backbone(self, backbone_name, pretrained):
@@ -101,7 +102,7 @@ class HoVerNetExt(nn.Module):
             raise NotImplementedError
 
     def forward(self, imgs):
-        imgs = imgs / 255.0  # to 0-1 range to match XY
+        imgs = imgs / 255.0
 
         d0, d1, d2, d3 = self.backbone(imgs, self.freeze)
         d3 = self.conv_bot(d3)

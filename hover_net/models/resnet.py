@@ -1,14 +1,14 @@
+# Core
 import os
 
+# Packages
 import torch
 import torch.nn as nn
 from torchvision.models.resnet import Bottleneck as ResNetBottleneck
 from torchvision.models.resnet import ResNet
 
-
 class ResNetExt(ResNet):
     def _forward_impl(self, x, freeze):
-        # See note [TorchScript super()]
         if self.training:
             x = self.conv1(x)
             x = self.bn1(x)

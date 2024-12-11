@@ -1,14 +1,15 @@
+# Packages
 import torch.nn as nn
 
-
 class Net(nn.Module):
-    """A base class provides a common weight initialisation scheme."""
+    """
+    A base class provides a common weight initialisation scheme.
+    """
 
     def weights_init(self):
         for m in self.modules():
             classname = m.__class__.__name__
 
-            # ! Fixed the type checking
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(
                     m.weight, mode="fan_out", nonlinearity="relu"

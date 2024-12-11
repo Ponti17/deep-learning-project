@@ -1,7 +1,7 @@
+# Packages
 import torch
 import torch.nn as nn
 import torchvision.models as models
-
 
 class ResNextExt(nn.Module):
     def __init__(self, num_input_channels, pretrained=None):

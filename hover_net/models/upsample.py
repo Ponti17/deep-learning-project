@@ -1,16 +1,16 @@
+# Packages
 import numpy as np
 import torch
 import torch.nn as nn
 
-
 class UpSample2x(nn.Module):
-    """Upsample input by a factor of 2.
+    """
+    Upsample input by a factor of 2.
     Assume input is of NCHW, port FixedUnpooling from TensorPack.
     """
 
     def __init__(self):
         super(UpSample2x, self).__init__()
-        # correct way to create constant within module
         self.register_buffer(
             "unpool_mat", torch.from_numpy(np.ones((2, 2), dtype="float32"))
         )
@@ -18,9 +18,6 @@ class UpSample2x(nn.Module):
 
     def forward(self, x):
         input_shape = list(x.shape)
-        # unsqueeze is expand_dims equivalent
-        # permute is transpose equivalent
-        # view is reshape equivalent
         x = x.unsqueeze(-1)  # bchwx1
         mat = self.unpool_mat.unsqueeze(0)  # 1xshxsw
         ret = torch.tensordot(x, mat, dims=1)  # bxcxhxwxshxsw
