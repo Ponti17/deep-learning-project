@@ -2,18 +2,18 @@ DATA:
   IMAGE_PATH: "./data/01_training_dataset_tif_ROIs"
   GEOJSON_PATH: "./data/01_training_dataset_geojson_nuclei"
   VALID_DATA_PATH: "./data"
-  NUM_TYPES: 4
-  PATCH_SIZE: 128
+  NUM_TYPES: 4        # 3 classes + 1 background
+  PATCH_SIZE: 256
 TRAIN:
   DEVICE: "cuda"
   EPOCHS: 50
   BATCH_SIZE: 2
 MODEL:
   BACKBONE: "resnext" # "resnet"
-  PRETRAINED: True    #"./pretrained/resnet50-0676ba61.pth"
-  NUM_TYPES: 4
+  PRETRAINED: True    # "./pretrained/resnet50-0676ba61.pth"
+  NUM_TYPES: 4        # 3 classes + 1 background
 LOGGING:
   SAVE_STEP: 5
-  SAVE_PATH: "./experiments/consep/"
+  SAVE_PATH: "./experiments/hovernet/"
   VERBOSE: TRUE
-  RUN_NAME: "128x128_patch_size"
+  RUN_NAME: "Your_Run_Name_Here"
